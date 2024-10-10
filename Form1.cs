@@ -8,7 +8,7 @@ namespace CG1
     {
         // Here is the place for all logic for main bitmap
         public Bitmap Bitmap { get; set; }
-        internal MyPolygon Polygon { get; set; }
+        internal MyPolygon Polygon { get; set; } = new MyPolygon();
         internal IDrawer Drawer { get; set; }
         public Form1()
         {
@@ -21,7 +21,7 @@ namespace CG1
         private void pictureBoxMain_Click(object sender, EventArgs e)
         {
             // Here I must add evaluation if creating mode is ON
-            if (Polygon is not null)
+            if (Polygon.Valid)
             {
                 return;
             }
@@ -29,7 +29,8 @@ namespace CG1
             // Now only points 
             MouseEventArgs me = (MouseEventArgs)e;
             Point point = me.Location;
-            Drawer.DrawCircle(new MyPoint(point, 4, Color.Black), Bitmap);
+            Polygon.AddPoint(point);
+            Polygon.DrawPolygon(Bitmap);
             pictureBoxMain.Image = Bitmap;
         }
     }

@@ -7,21 +7,29 @@ using System.Threading.Tasks;
 
 namespace CG1.Drawers
 {
-    internal class LibraryDrawer : IDrawer
+    public class LibraryDrawer : IDrawer
     {
-        public Bitmap DrawCircle(MyPoint point, Bitmap canvas)
+        private Graphics g;
+        // Magick number here, important to aoid!!! I must to change this
+        private Pen pen = new Pen(Color.Black, 2);
+
+        public Bitmap DrawCircle(MyPoint point, Color color, Bitmap canvas)
         {
             // Points must be solid
             Bitmap last = (Bitmap)canvas.Clone();
-            Graphics g = Graphics.FromImage(canvas);
-            Pen pen = new Pen(point.Color);
-            g.DrawEllipse(pen, point.Center.X - point.Radius / 2, point.Center.Y - point.Radius / 2, point.Radius, point.Radius);
+            g = Graphics.FromImage(canvas);
+            pen.Color = color;
+            g.DrawEllipse(pen, point.Center.X - point.Radius / 2, point.Center.Y - point.Radius / 2, 2 * point.Radius, 2 * point.Radius);
             return last;
         }
 
-        public Bitmap DrawLine(MyPoint first, MyPoint second, Bitmap canvas)
+        public Bitmap DrawLine(MyLine line, Color color, Bitmap canvas)
         {
-            throw new NotImplementedException();
+            Bitmap last = (Bitmap)canvas.Clone();
+            g = Graphics.FromImage(canvas);
+            pen.Color = color;
+            g.DrawLine(pen, line.First.Center, line.Second.Center);
+            return last;
         }
     }
 }

@@ -9,9 +9,9 @@ namespace CG1.Drawers
 {
     // My idea is te create interface, that gives rules for drawing shapes like a line, a curve and a point. 
     // Accordding to different mode, all program will pass a different IDrawer, to create shapes.
-    internal interface IDrawer
+    public interface IDrawer
     {
-        public Bitmap DrawCircle(MyPoint center, Bitmap canvas);
-        public Bitmap DrawLine(MyPoint first, MyPoint second, Bitmap canvas);
+        public Bitmap DrawCircle(MyPoint center, Color color, Bitmap canvas);
+        public Bitmap DrawLine(MyLine line, Color color, Bitmap canvas);
     }
 }

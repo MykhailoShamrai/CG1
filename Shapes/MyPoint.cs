@@ -6,17 +6,18 @@ using System.Threading.Tasks;
 
 namespace CG1.Shapes
 {
-    internal class MyPoint
+    public class MyPoint
     {
         public Point Center { get; set; }
         public int Radius { get; set; }
+
         public Color Color { get; set; }
 
-        public MyPoint(Point center, int radius, Color color)
+        public MyPoint(Point center, int radius)
         {
             Center = center;
             Radius = radius;
-            Color = color;
+            Color = Color.Black;
         }
     }
 }
