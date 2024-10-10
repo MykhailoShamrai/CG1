@@ -10,8 +10,10 @@ namespace CG1.Shapes
 {
     public class MyPolygon
     {
+        // I must create some better solution for having tmp new line
         public int VertexRadius { get; set; }
-        public bool Valid = false;
+        public bool Valid { get; set; } = false;
+        public bool Editing { get; set; } = false; 
         public Color Color { get; set; }
         private IDrawer _drawer = null;
         public List<MyPoint> Points { get; set; }
@@ -25,17 +27,55 @@ namespace CG1.Shapes
             SetDrawer(new LibraryDrawer());
         }
 
+        private bool CheckIfVertexIsOnLegalPosition(MyPoint point)
+        {
+            bool res = true;
+            int x = point.Center.X;
+            int y = point.Center.Y;
+            int xx = 0;
+            int yy = 0;
+            for (int i = 0; i < Points.Count; i++)
+            {
+                xx = Points[i].Center.X;
+                yy = Points[i].Center.Y;
+                if (Math.Abs((x - xx) * (x - xx) + (y - yy) * (y - yy)) < 4 * VertexRadius * point.Radius)
+                {
+                    res = false;
+                    break;
+                }
+            }
+            return res;
+        }
+
         public void SetDrawer(IDrawer drawer)
         {
             _drawer = drawer; 
         }
 
-        public void DrawPolygon(Bitmap bitmap)
+        public Bitmap DrawPolygon(Bitmap bitmap)
         {
+            Bitmap last = null!;
             foreach (MyPoint point in Points)
                 _drawer.DrawCircle(point, point.Color, bitmap);
             foreach (MyLine line in Lines)
-                _drawer.DrawLine(line, line.Color, bitmap);
+                last = _drawer.DrawLine(line, line.Color, bitmap);
+            return last;
+        }
+
+        public Bitmap DrawPolygon(Bitmap bitmap, MyPoint lastPoint, MyPoint tmp)
+        {
+            Bitmap last = null!;
+            last = DrawPolygon(bitmap);
+            if (CheckIfVertexIsOnLegalPosition(tmp))
+            {
+                // I must find better soluton, because creating a new line for each time is memory consuming
+                last = _drawer.DrawCircle(tmp, Color.Green, bitmap);
+                if (lastPoint != null)
+                {
+                    _drawer.DrawLine(new MyLine(lastPoint, tmp, Color.Green), Color.Green, bitmap);
+                }
+            }
+            return last;
         }
         public bool AddPoint(Point point)
         {
@@ -63,16 +103,8 @@ namespace CG1.Shapes
                 }
                 else
                 {
-                    for (int i = 0; i < Points.Count; i++)
-                    {
-                        xx = Points[i].Center.X;
-                        yy = Points[i].Center.Y;
-                        if (Math.Abs((x - xx) * (x - xx) + (y - yy) * (y - yy)) < 4 * VertexRadius * VertexRadius)
-                        {
-                            res = false;
-                            break;
-                        }
-                    }
+                    // This part of code can be placed as another function, because it may be important in other part of code
+                    res = CheckIfVertexIsOnLegalPosition(curp);
                 }
             }
             if (Points.Count == 0)

@@ -19,7 +19,7 @@ namespace CG1.Drawers
             Bitmap last = (Bitmap)canvas.Clone();
             g = Graphics.FromImage(canvas);
             pen.Color = color;
-            g.DrawEllipse(pen, point.Center.X - point.Radius / 2, point.Center.Y - point.Radius / 2, 2 * point.Radius, 2 * point.Radius);
+            g.DrawEllipse(pen, point.Center.X - point.Radius, point.Center.Y - point.Radius, 2 * point.Radius, 2 * point.Radius);
             return last;
         }
 
