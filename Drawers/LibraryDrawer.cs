@@ -13,23 +13,23 @@ namespace CG1.Drawers
         // Magick number here, important to aoid!!! I must to change this
         private Pen pen = new Pen(Color.Black, 2);
 
-        public Bitmap DrawCircle(MyPoint point, Color color, Bitmap canvas)
+        public void DrawCircle(MyPoint point, Color color, Bitmap canvas)
         {
             // Points must be solid
-            Bitmap last = (Bitmap)canvas.Clone();
+            //Bitmap last = (Bitmap)canvas.Clone();
             g = Graphics.FromImage(canvas);
             pen.Color = color;
             g.DrawEllipse(pen, point.Center.X - point.Radius, point.Center.Y - point.Radius, 2 * point.Radius, 2 * point.Radius);
-            return last;
+            //return last;
         }
 
-        public Bitmap DrawLine(MyLine line, Color color, Bitmap canvas)
+        public void DrawLine(MyLine line, Color color, Bitmap canvas)
         {
-            Bitmap last = (Bitmap)canvas.Clone();
+            //Bitmap last = (Bitmap)canvas.Clone();
             g = Graphics.FromImage(canvas);
             pen.Color = color;
             g.DrawLine(pen, line.First.Center, line.Second.Center);
-            return last;
+            //return last;
         }
     }
 }

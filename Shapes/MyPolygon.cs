@@ -52,30 +52,23 @@ namespace CG1.Shapes
             _drawer = drawer; 
         }
 
-        public Bitmap DrawPolygon(Bitmap bitmap)
+        public void DrawPolygon(Bitmap bitmap)
         {
-            Bitmap last = null!;
             foreach (MyPoint point in Points)
                 _drawer.DrawCircle(point, point.Color, bitmap);
             foreach (MyLine line in Lines)
-                last = _drawer.DrawLine(line, line.Color, bitmap);
-            return last;
+                _drawer.DrawLine(line, line.Color, bitmap);
         }
 
-        public Bitmap DrawPolygon(Bitmap bitmap, MyPoint lastPoint, MyPoint tmp)
+        public void DrawPolygon(Bitmap bitmap, MyPoint lastPoint, MyPoint tmp)
         {
-            Bitmap last = null!;
-            last = DrawPolygon(bitmap);
-            if (CheckIfVertexIsOnLegalPosition(tmp))
+            DrawPolygon(bitmap);
+            // I must find better soluton, because creating a new line for each time is memory consuming
+            _drawer.DrawCircle(tmp, Color.Green, bitmap);
+            if (lastPoint != null)
             {
-                // I must find better soluton, because creating a new line for each time is memory consuming
-                last = _drawer.DrawCircle(tmp, Color.Green, bitmap);
-                if (lastPoint != null)
-                {
-                    _drawer.DrawLine(new MyLine(lastPoint, tmp, Color.Green), Color.Green, bitmap);
-                }
+                _drawer.DrawLine(new MyLine(lastPoint, tmp, Color.Green), Color.Green, bitmap);
             }
-            return last;
         }
         public bool AddPoint(Point point)
         {
