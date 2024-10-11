@@ -16,7 +16,7 @@ namespace CG1
         {
             InitializeComponent();
             Bitmap = new Bitmap(this.pictureBoxMain.Width, this.pictureBoxMain.Height);
-            ClearBitmap(Bitmap);                                                    
+            ClearBitmap(Bitmap);
             pictureBoxMain.Image = Bitmap;
             Drawer = new LibraryDrawer();
         }
@@ -32,29 +32,52 @@ namespace CG1
         private void pictureBoxMain_Click(object sender, EventArgs e)
         {
             // Here I must add evaluation if creating mode is ON
+            MouseEventArgs me = (MouseEventArgs)e;
             if (!Polygon.Valid)
             {
                 ClearBitmap(Bitmap);
-                MouseEventArgs me = (MouseEventArgs)e;
+
                 Point point = me.Location;
                 Polygon.AddPoint(point);
-                Polygon.DrawPolygon(Bitmap);
-                pictureBoxMain.Image = Bitmap;
             }
+            else if (!Polygon.Editing && Polygon.CheckIfClickedInVertex(me.Location))
+            {
+                Polygon.Editing = true;
+            }
+            Polygon.DrawPolygon(Bitmap);
+            pictureBoxMain.Image = Bitmap;
         }
 
         private void pictureBoxMain_MouseMove(object sender, MouseEventArgs e)
         {
+            MouseEventArgs me = e;
             // If I want this work, I should change bitmaps 
             if (!Polygon.Valid)
             {
                 ClearBitmap(Bitmap);
-                MouseEventArgs me = e;
                 Point point = me.Location;
                 tmpPoint[1].Center = point;
                 tmpPoint[0] = (Polygon.Points.Count == 0) ? null : Polygon.Points[^1];
                 Polygon.DrawPolygon(Bitmap, tmpPoint[0], tmpPoint[1]);
-                pictureBoxMain.Image = Bitmap;
+            }
+            else if (Polygon.Editing)
+            {
+                if (Polygon.CheckIfAnyVertexIsChosen())
+                {
+                    ClearBitmap(Bitmap);
+                    Polygon.DragVertex(me.Location);
+                    Polygon.DrawPolygon(Bitmap);
+                }
+            }
+            pictureBoxMain.Image = Bitmap;
+        }
+
+        private void pictureBoxMain_MouseUp(object sender, MouseEventArgs e)
+        {
+            MouseEventArgs me = e;
+            if (Polygon.Editing && Polygon.CheckIfAnyVertexIsChosen())
+            {
+                Polygon.Editing = false;
             }
         }
     }

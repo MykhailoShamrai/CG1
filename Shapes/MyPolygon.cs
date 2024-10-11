@@ -13,7 +13,8 @@ namespace CG1.Shapes
         // I must create some better solution for having tmp new line
         public int VertexRadius { get; set; }
         public bool Valid { get; set; } = false;
-        public bool Editing { get; set; } = false; 
+        public bool Editing { get; set; } = false;
+        private MyPoint? _chosenVertex = null;
         public Color Color { get; set; }
         private IDrawer _drawer = null;
         public List<MyPoint> Points { get; set; }
@@ -27,9 +28,9 @@ namespace CG1.Shapes
             SetDrawer(new LibraryDrawer());
         }
 
-        private bool CheckIfVertexIsOnLegalPosition(MyPoint point)
+        private MyPoint? CheckIfVertexIsOnLegalPosition(MyPoint point)
         {
-            bool res = true;
+            MyPoint? res = null;
             int x = point.Center.X;
             int y = point.Center.Y;
             int xx = 0;
@@ -40,16 +41,43 @@ namespace CG1.Shapes
                 yy = Points[i].Center.Y;
                 if (Math.Abs((x - xx) * (x - xx) + (y - yy) * (y - yy)) < 4 * VertexRadius * point.Radius)
                 {
-                    res = false;
+                    res = Points[i];
                     break;
                 }
             }
             return res;
         }
 
+        public bool CheckIfClickedInVertex(Point point)
+        {
+            _chosenVertex = CheckIfVertexIsOnLegalPosition(new MyPoint(point, VertexRadius / 4));
+            if (_chosenVertex is not null)
+            {
+                _chosenVertex.Color = Color.Green;
+            }
+            return _chosenVertex is null;
+        }
+
+        /// <summary>
+        /// Method that changes position of chosen vertex, but only if ths vertex is chosen and 
+        /// there is no colistion with other vertices
+        /// </summary>
+        /// <param name="vertexTmp">Postion to which chosen vertex must go</param>
+        public void DragVertex(Point vertexTmp)
+        {
+            if (_chosenVertex is not null && CheckIfVertexIsOnLegalPosition(new MyPoint(vertexTmp, VertexRadius)) is null)
+            {
+                _chosenVertex!.Center = vertexTmp;
+            }
+        }
         public void SetDrawer(IDrawer drawer)
         {
             _drawer = drawer; 
+        }
+
+        public bool CheckIfAnyVertexIsChosen()
+        {
+            return _chosenVertex is not null;
         }
 
         public void DrawPolygon(Bitmap bitmap)
@@ -92,16 +120,18 @@ namespace CG1.Shapes
                     if (Points.Count > 2)
                     {
                         Valid = true;
+                        Editing = false;
                     }
                 }
                 else
                 {
                     // This part of code can be placed as another function, because it may be important in other part of code
-                    res = CheckIfVertexIsOnLegalPosition(curp);
+                    res = CheckIfVertexIsOnLegalPosition(curp) is null;
                 }
             }
             if (Points.Count == 0)
             {
+                Editing = true;
                 Points.Add(curp);
             }
             else if (res)
