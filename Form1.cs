@@ -15,7 +15,7 @@ namespace CG1
         public Form1()
         {
             InitializeComponent();
-            Bitmap = new Bitmap(this.pictureBoxMain.Width, this.pictureBoxMain.Height);
+            Bitmap = new Bitmap(Screen.PrimaryScreen.Bounds.Width, Screen.PrimaryScreen.Bounds.Height);
             ClearBitmap(Bitmap);
             pictureBoxMain.Image = Bitmap;
             Drawer = new LibraryDrawer();
@@ -44,6 +44,11 @@ namespace CG1
             {
                 Polygon.Editing = true;
             }
+            else if (Polygon.Editing)
+            {
+                Polygon.Editing = false;
+                Polygon.UnchooseVertex();
+            }
             Polygon.DrawPolygon(Bitmap);
             pictureBoxMain.Image = Bitmap;
         }
@@ -70,15 +75,6 @@ namespace CG1
                 }
             }
             pictureBoxMain.Image = Bitmap;
-        }
-
-        private void pictureBoxMain_MouseUp(object sender, MouseEventArgs e)
-        {
-            MouseEventArgs me = e;
-            if (Polygon.Editing && Polygon.CheckIfAnyVertexIsChosen())
-            {
-                Polygon.Editing = false;
-            }
         }
     }
 }

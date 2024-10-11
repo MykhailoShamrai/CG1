@@ -42,7 +42,6 @@
             pictureBoxMain.TabStop = false;
             pictureBoxMain.Click += pictureBoxMain_Click;
             pictureBoxMain.MouseMove += pictureBoxMain_MouseMove;
-            pictureBoxMain.MouseUp += pictureBoxMain_MouseUp;
             // 
             // Form1
             // 

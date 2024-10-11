@@ -24,7 +24,7 @@ namespace CG1.Shapes
         {
             Points = new List<MyPoint>();
             Lines = new List<MyLine>();
-            VertexRadius = 4;
+            VertexRadius = 6;
             SetDrawer(new LibraryDrawer());
         }
 
@@ -50,12 +50,22 @@ namespace CG1.Shapes
 
         public bool CheckIfClickedInVertex(Point point)
         {
+            // Maybe I should change it and devide into two functions
+            if (_chosenVertex != null)
+                _chosenVertex.Color = Color.Black;
             _chosenVertex = CheckIfVertexIsOnLegalPosition(new MyPoint(point, VertexRadius / 4));
             if (_chosenVertex is not null)
             {
                 _chosenVertex.Color = Color.Green;
             }
-            return _chosenVertex is null;
+            return _chosenVertex is not null;
+        }
+
+        public void UnchooseVertex()
+        {
+            if (_chosenVertex != null)
+                _chosenVertex.Color = Color.Black;
+            _chosenVertex = null;
         }
 
         /// <summary>
