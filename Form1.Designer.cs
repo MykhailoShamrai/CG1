@@ -29,6 +29,7 @@
         private void InitializeComponent()
         {
             pictureBoxMain = new PictureBox();
+            textBox1 = new TextBox();
             ((System.ComponentModel.ISupportInitialize)pictureBoxMain).BeginInit();
             SuspendLayout();
             // 
@@ -43,20 +44,31 @@
             pictureBoxMain.Click += pictureBoxMain_Click;
             pictureBoxMain.MouseMove += pictureBoxMain_MouseMove;
             // 
+            // textBox1
+            // 
+            textBox1.Location = new Point(586, 24);
+            textBox1.Multiline = true;
+            textBox1.Name = "textBox1";
+            textBox1.Size = new Size(202, 328);
+            textBox1.TabIndex = 1;
+            // 
             // Form1
             // 
             AutoScaleDimensions = new SizeF(8F, 20F);
             AutoScaleMode = AutoScaleMode.Font;
             ClientSize = new Size(800, 450);
+            Controls.Add(textBox1);
             Controls.Add(pictureBoxMain);
             Name = "Form1";
             Text = "Form1";
             ((System.ComponentModel.ISupportInitialize)pictureBoxMain).EndInit();
             ResumeLayout(false);
+            PerformLayout();
         }
 
         #endregion
 
         private PictureBox pictureBoxMain;
+        private TextBox textBox1;
     }
 }

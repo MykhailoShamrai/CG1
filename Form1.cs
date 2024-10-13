@@ -12,6 +12,10 @@ namespace CG1
         public Bitmap Bitmap { get; set; }
         internal MyPolygon Polygon { get; set; } = new MyPolygon();
         internal IDrawer Drawer { get; set; }
+        public void AddText(string txt)
+        {
+            textBox1.Text = txt;
+        }
         public Form1()
         {
             InitializeComponent();
@@ -40,7 +44,7 @@ namespace CG1
                 Point point = me.Location;
                 Polygon.AddPoint(point);
             }
-            else if (!Polygon.Editing && Polygon.CheckIfClickedInVertex(me.Location))
+            else if (!Polygon.Editing && Polygon.CheckIfClickedInSomething(me.Location) is not null)
             {
                 Polygon.Editing = true;
             }
@@ -50,7 +54,7 @@ namespace CG1
                 Polygon.UnchooseVertex();
             }
             Polygon.DrawPolygon(Bitmap);
-            pictureBoxMain.Image = Bitmap;
+            pictureBoxMain.Refresh();
         }
 
         private void pictureBoxMain_MouseMove(object sender, MouseEventArgs e)
@@ -60,6 +64,8 @@ namespace CG1
             if (!Polygon.Valid)
             {
                 ClearBitmap(Bitmap);
+                //pictureBoxMain.Image = Bitmap;
+                //pictureBoxMain.Refresh();
                 Point point = me.Location;
                 tmpPoint[1].Center = point;
                 tmpPoint[0] = (Polygon.Points.Count == 0) ? null : Polygon.Points[^1];
@@ -74,7 +80,7 @@ namespace CG1
                     Polygon.DrawPolygon(Bitmap);
                 }
             }
-            pictureBoxMain.Image = Bitmap;
+            pictureBoxMain.Refresh();
         }
     }
 }

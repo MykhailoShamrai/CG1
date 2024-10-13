@@ -28,6 +28,23 @@ namespace CG1.Shapes
             SetDrawer(new LibraryDrawer());
         }
 
+        public Element? CheckIfClickedInSomething(Point pos)
+        {
+            Element? element = null;
+            foreach (MyPoint point in Points)
+            {
+                element = CheckIfClickedInVertex(pos) ? point : null;
+            }
+            if (element is null)
+            {
+                foreach (MyLine line in Lines)
+                {
+                    element = line.CheckIfPointIsInsideBox(pos) ? line : null;
+                }
+            }
+            return element;
+        }
+
         private MyPoint? CheckIfVertexIsOnLegalPosition(MyPoint point)
         {
             MyPoint? res = null;
@@ -48,6 +65,8 @@ namespace CG1.Shapes
             return res;
         }
 
+        // I should implement choosing an edge. For this I want rename function and reimplement 
+        // chicking if i click in something. 
         public bool CheckIfClickedInVertex(Point point)
         {
             // Maybe I should change it and devide into two functions
@@ -93,19 +112,19 @@ namespace CG1.Shapes
         public void DrawPolygon(Bitmap bitmap)
         {
             foreach (MyPoint point in Points)
-                _drawer.DrawCircle(point, point.Color, bitmap);
+                _drawer.Draw(point, point.Color, bitmap);
             foreach (MyLine line in Lines)
-                _drawer.DrawLine(line, line.Color, bitmap);
+                _drawer.Draw(line, line.Color, bitmap);
         }
 
         public void DrawPolygon(Bitmap bitmap, MyPoint lastPoint, MyPoint tmp)
         {
             DrawPolygon(bitmap);
             // I must find better soluton, because creating a new line for each time is memory consuming
-            _drawer.DrawCircle(tmp, Color.Green, bitmap);
+            _drawer.Draw(tmp, Color.Green, bitmap);
             if (lastPoint != null)
             {
-                _drawer.DrawLine(new MyLine(lastPoint, tmp, Color.Green), Color.Green, bitmap);
+                _drawer.Draw(new MyLine(lastPoint, tmp, Color.Green), Color.Green, bitmap);
             }
         }
         public bool AddPoint(Point point)

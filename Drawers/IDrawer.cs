@@ -11,7 +11,7 @@ namespace CG1.Drawers
     // Accordding to different mode, all program will pass a different IDrawer, to create shapes.
     public interface IDrawer
     {
-        public void DrawCircle(MyPoint center, Color color, Bitmap canvas);
-        public void DrawLine(MyLine line, Color color, Bitmap canvas);
+        public void Draw(MyPoint center, Color color, Bitmap canvas);
+        public void Draw(MyLine line, Color color, Bitmap canvas);
     }
 }
