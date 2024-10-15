@@ -19,7 +19,6 @@ namespace CG1.Shapes
                 }
             }}
         public int Radius { get; set; }
-        public Color Color { get; set; }
 
         public event PropertyChangedEventHandler PropertyChanged;
 

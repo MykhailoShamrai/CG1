@@ -28,7 +28,9 @@
         /// </summary>
         private void InitializeComponent()
         {
+            components = new System.ComponentModel.Container();
             pictureBoxMain = new PictureBox();
+            contextMenuStrip1 = new ContextMenuStrip(components);
             ((System.ComponentModel.ISupportInitialize)pictureBoxMain).BeginInit();
             SuspendLayout();
             // 
@@ -42,6 +44,12 @@
             pictureBoxMain.TabStop = false;
             pictureBoxMain.Click += pictureBoxMain_Click;
             pictureBoxMain.MouseMove += pictureBoxMain_MouseMove;
+            // 
+            // contextMenuStrip1
+            // 
+            contextMenuStrip1.ImageScalingSize = new Size(20, 20);
+            contextMenuStrip1.Name = "contextMenuStrip1";
+            contextMenuStrip1.Size = new Size(61, 4);
             // 
             // Form1
             // 
@@ -58,5 +66,6 @@
         #endregion
 
         private PictureBox pictureBoxMain;
+        private ContextMenuStrip contextMenuStrip1;
     }
 }

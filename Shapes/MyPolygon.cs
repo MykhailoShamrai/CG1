@@ -1,10 +1,12 @@
 ﻿using CG1.Drawers;
 using System;
 using System.Collections.Generic;
+using System.Drawing;
 using System.Linq;
 using System.Security.Cryptography.Xml;
 using System.Text;
 using System.Threading.Tasks;
+using System.Windows.Forms.VisualStyles;
 
 namespace CG1.Shapes
 {
@@ -14,34 +16,83 @@ namespace CG1.Shapes
         public int VertexRadius { get; set; }
         public bool Valid { get; set; } = false;
         public bool Editing { get; set; } = false;
-        private MyPoint? _chosenVertex = null;
+        private Element? _chosenElement = null;
         public Color Color { get; set; }
         private IDrawer _drawer = null;
-        public List<MyPoint> Points { get; set; }
-        public List<MyLine> Lines { get; set; }
+        public LinkedList<MyPoint> Points { get; set; }
+        public LinkedList<MyLine> Lines { get; set; }
+        public enum ChosenType
+        {
+            None,
+            Vertex,
+            Edge,
+            Bezier
+        }
+        public ChosenType TypeOfChosen { get; set; } = ChosenType.None;
         
         public MyPolygon()
         {
-            Points = new List<MyPoint>();
-            Lines = new List<MyLine>();
+            Points = new LinkedList<MyPoint>();
+            Lines = new LinkedList<MyLine>();
             VertexRadius = 6;
             SetDrawer(new LibraryDrawer());
+        }
+
+        public void AddPointInsideChosenEdge()
+        {
+            if (_chosenElement != null)
+            {
+                MyLine line = (MyLine)(_chosenElement!);
+                Point newCoord = new Point((Math.Abs(line.Second.Center.X - line.First.Center.X) >> 1),
+                    (Math.Abs(line.Second.Center.Y - line.First.Center.Y)) >> 1);
+                MyPoint tmpPoint = new MyPoint(newCoord, VertexRadius);
+                if (CheckIfVertexIsOnLegalPosition(tmpPoint) is null)
+                {
+                    LinkedListNode<MyLine> lineNode = Lines.Find(line)!;
+                    Lines.AddAfter(lineNode, new MyLine(tmpPoint, line.Second, Color.Black));
+                    //line.Second = tmpPoint;
+                    line.ChangeSecondEnd(tmpPoint);
+                    LinkedListNode<MyPoint> pointNode = Points.Find(line.First)!;
+                    Points.AddAfter(pointNode, tmpPoint);
+                }
+            }
         }
 
         public Element? CheckIfClickedInSomething(Point pos)
         {
             Element? element = null;
-            foreach (MyPoint point in Points)
-            {
-                element = CheckIfClickedInVertex(pos) ? point : null;
-            }
+            //foreach (MyPoint point in Points)
+            
+            element = CheckIfVertexIsOnLegalPosition(new MyPoint(pos, VertexRadius / 4));
+            //if (element != null)
+            //break;
+
             if (element is null)
             {
                 foreach (MyLine line in Lines)
                 {
                     element = line.CheckIfPointIsInsideBox(pos) ? line : null;
+                    if (element != null)
+                    {
+                        TypeOfChosen = ChosenType.Edge;
+                        break;
+                    }
                 }
             }
+            else
+            {
+                TypeOfChosen = ChosenType.Vertex;
+            }
+            if (_chosenElement is not null)
+            {
+                _chosenElement.Color = Color.Black;
+            }
+            _chosenElement = element;
+            if (_chosenElement is not null)
+            {
+                _chosenElement.Color = Color.Red;
+            }
+
             return element;
         }
 
@@ -52,13 +103,15 @@ namespace CG1.Shapes
             int y = point.Center.Y;
             int xx = 0;
             int yy = 0;
+            MyPoint tmp;
             for (int i = 0; i < Points.Count; i++)
             {
-                xx = Points[i].Center.X;
-                yy = Points[i].Center.Y;
+                tmp = Points.ElementAt(i);
+                xx = tmp.Center.X;
+                yy = tmp.Center.Y;
                 if (Math.Abs((x - xx) * (x - xx) + (y - yy) * (y - yy)) < 4 * VertexRadius * point.Radius)
                 {
-                    res = Points[i];
+                    res = tmp;
                     break;
                 }
             }
@@ -70,21 +123,17 @@ namespace CG1.Shapes
         public bool CheckIfClickedInVertex(Point point)
         {
             // Maybe I should change it and devide into two functions
-            if (_chosenVertex != null)
-                _chosenVertex.Color = Color.Black;
-            _chosenVertex = CheckIfVertexIsOnLegalPosition(new MyPoint(point, VertexRadius / 4));
-            if (_chosenVertex is not null)
-            {
-                _chosenVertex.Color = Color.Green;
-            }
-            return _chosenVertex is not null;
+            //if (_chosenElement != null)
+            //    _chosenElement.Color = Color.Black;
+            MyPoint? tmp = CheckIfVertexIsOnLegalPosition(new MyPoint(point, VertexRadius / 4));
+            return tmp is not null;
         }
 
-        public void UnchooseVertex()
+        public void UnchooseElement()
         {
-            if (_chosenVertex != null)
-                _chosenVertex.Color = Color.Black;
-            _chosenVertex = null;
+            if (_chosenElement != null)
+                _chosenElement.Color = Color.Black;
+            _chosenElement = null;
         }
 
         /// <summary>
@@ -94,9 +143,10 @@ namespace CG1.Shapes
         /// <param name="vertexTmp">Postion to which chosen vertex must go</param>
         public void DragVertex(Point vertexTmp)
         {
-            if (_chosenVertex is not null && CheckIfVertexIsOnLegalPosition(new MyPoint(vertexTmp, VertexRadius)) is null)
+            if (_chosenElement is not null && TypeOfChosen == ChosenType.Vertex
+                && CheckIfVertexIsOnLegalPosition(new MyPoint(vertexTmp, VertexRadius)) is null)
             {
-                _chosenVertex!.Center = vertexTmp;
+                (_chosenElement as MyPoint)!.Center = vertexTmp;
             }
         }
         public void SetDrawer(IDrawer drawer)
@@ -104,9 +154,9 @@ namespace CG1.Shapes
             _drawer = drawer; 
         }
 
-        public bool CheckIfAnyVertexIsChosen()
+        public bool CheckIfAnyElementIsChosen()
         {
-            return _chosenVertex is not null;
+            return _chosenElement is not null;
         }
 
         public void DrawPolygon(Bitmap bitmap)
@@ -142,8 +192,8 @@ namespace CG1.Shapes
             if (Points.Count > 0)
             {
                 // If click is in border of first vertex, we must end creating process.
-                xx = Points[0].Center.X;
-                yy = Points[0].Center.Y;
+                xx = Points.ElementAt(0).Center.X;
+                yy = Points.ElementAt(0).Center.Y;
                 if (Math.Abs((x - xx) * (x - xx) + (y - yy) * (y - yy)) <= VertexRadius * VertexRadius)
                 {
                     if (Points.Count > 2)
@@ -161,18 +211,18 @@ namespace CG1.Shapes
             if (Points.Count == 0)
             {
                 Editing = true;
-                Points.Add(curp);
+                Points.AddLast(curp);
             }
             else if (res)
             {
                 if (Valid)
                 {
-                    Lines.Add(new MyLine(Points[^1], Points[0], Color.Black));
+                    Lines.AddLast(new MyLine(Points.Last!.Value, Points.First!.Value, Color.Black));
                 }
                 else
                 {
-                    Lines.Add(new MyLine(Points[^1], curp, Color.Black));
-                    Points.Add(curp);
+                    Lines.AddLast(new MyLine(Points.Last!.Value, curp, Color.Black));
+                    Points.AddLast(curp);
                 }
             }
             return res;

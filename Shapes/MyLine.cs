@@ -9,11 +9,10 @@ namespace CG1.Shapes
 {
     public class MyLine: Element
     {
-        private int thicknes = 4;
+        private int thicknes = 5;
         public MyPoint First { get; set; }
         public MyPoint Second { get; set; }
         public List<Triangle> BoundingBox { get; set; }
-        public Color Color { get; set; }
         public MyLine(MyPoint first, MyPoint second, Color color)
         {
             First = first;
@@ -23,6 +22,22 @@ namespace CG1.Shapes
             BoundingBox.Add(new Triangle());
             BoundingBox.Add(new Triangle());
             First.PropertyChanged += OnPointChanged;
+            Second.PropertyChanged += OnPointChanged;
+            CalcTheBoundingBox();
+        }
+
+        public void ChangeFirstEnd(MyPoint point)
+        {
+            First.PropertyChanged -= OnPointChanged;
+            First = point;
+            Second.PropertyChanged += OnPointChanged;
+            CalcTheBoundingBox();
+        }
+
+        public void ChangeSecondEnd(MyPoint point)
+        {
+            Second.PropertyChanged -= OnPointChanged;
+            Second = point;
             Second.PropertyChanged += OnPointChanged;
             CalcTheBoundingBox();
         }
@@ -57,14 +72,6 @@ namespace CG1.Shapes
         public bool CheckIfPointIsInsideBox(Point point)
         {
             bool res = BoundingBox[0].CheckIfPointIsInside(point) || BoundingBox[1].CheckIfPointIsInside(point);
-            if (res)
-            {
-                Color = Color.Red;
-            }
-            else
-            {
-                Color = Color.Black;
-            }
             return res;
         }
     }
