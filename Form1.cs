@@ -13,8 +13,6 @@ namespace CG1
         public Bitmap Bitmap { get; set; }
         internal MyPolygon Polygon { get; set; } = new MyPolygon();
         internal IDrawer Drawer { get; set; }
-        private ContextMenuStrip contextMenuStripForVertex = new ContextMenuStrip();
-        private ContextMenuStrip contextMenuStripForEdge = new LineMenu();
 
         public Form1()
         {
@@ -23,7 +21,16 @@ namespace CG1
             ClearBitmap(Bitmap);
             pictureBoxMain.Image = Bitmap;
             Drawer = new LibraryDrawer();
-            contextMenuStripForEdge.Items[0].Click += AddVertex_Click;
+            MyLine.Menu.Items[0].Click += AddVertex_Click;
+            MyPoint.Menu.Items[0].Click += DeleteVertex_Click;
+        }
+
+        private void DeleteVertex_Click(object? sender, EventArgs e)
+        {
+            Polygon.DeleteChosenPoint();
+            ClearBitmap(Bitmap);
+            Polygon.DrawPolygon(Bitmap);
+            pictureBoxMain.Refresh();
         }
 
         private void AddVertex_Click(object? sender, EventArgs e)
@@ -57,7 +64,7 @@ namespace CG1
                     }
                     else if (!Polygon.Editing)
                     {
-                        Element tmp = Polygon.CheckIfClickedInSomething(me.Location);
+                        IElement tmp = Polygon.CheckIfClickedInSomething(me.Location);
                         if (Polygon.TypeOfChosen == MyPolygon.ChosenType.Vertex)
                         {
                             Polygon.Editing = true;
@@ -76,24 +83,10 @@ namespace CG1
                     }
                     else
                     {
-                        Element chosen = Polygon.CheckIfClickedInSomething(me.Location);
+                        IElement chosen = Polygon.CheckIfClickedInSomething(me.Location);
                         if (chosen != null)
                         {
-                            switch (Polygon.TypeOfChosen)
-                            {
-                                case MyPolygon.ChosenType.None:
-                                    break;
-                                case MyPolygon.ChosenType.Vertex:
-                                    contextMenuStripForVertex.Show(me.Location);
-                                    break;
-                                case MyPolygon.ChosenType.Edge:
-                                    contextMenuStripForEdge.Show(pictureBoxMain, me.Location);
-                                    break;
-                                case MyPolygon.ChosenType.Bezier:
-                                    break;
-                                default:
-                                    break;
-                            }
+                            chosen.GetMenu().Show(pictureBoxMain, me.Location);
                         }
                     }
                     break;

@@ -9,10 +9,8 @@ namespace CG1.ContextMenus
 {
     internal class LineMenu: ContextMenuStrip
     {
-        //public MyPolygon Polygon { get; set; }
         public LineMenu(): base()
         {
-            //Polygon = poly;
             ToolStripMenuItem addButton = new ToolStripMenuItem("Add vertex");
             ToolStripMenuItem lockButton = new ToolStripMenuItem("Lock the length");
             lockButton.Enabled = false;

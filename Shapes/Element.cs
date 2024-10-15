@@ -6,8 +6,10 @@ using System.Threading.Tasks;
 
 namespace CG1.Shapes
 {
-    public abstract class Element
+    public interface IElement
     {
+        public ContextMenuStrip GetMenu();
+        public static abstract ContextMenuStrip Menu { get; }
         public Color Color { get; set; }
         public static int Cross(Point x, Point y, Point o)
         {

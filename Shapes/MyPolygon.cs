@@ -12,11 +12,10 @@ namespace CG1.Shapes
 {
     public class MyPolygon
     {
-        // I must create some better solution for having tmp new line
         public int VertexRadius { get; set; }
         public bool Valid { get; set; } = false;
         public bool Editing { get; set; } = false;
-        private Element? _chosenElement = null;
+        private IElement? _chosenElement = null;
         public Color Color { get; set; }
         private IDrawer _drawer = null;
         public LinkedList<MyPoint> Points { get; set; }
@@ -38,19 +37,70 @@ namespace CG1.Shapes
             SetDrawer(new LibraryDrawer());
         }
 
+        public void DeleteChosenPoint()
+        {
+            if (_chosenElement != null)
+            {
+                MyPoint point = (MyPoint)_chosenElement;
+                LinkedListNode<MyPoint> nodeRef = Points.Find(point)!;
+                if (Points.First!.Equals(nodeRef))
+                {
+                    Points.RemoveFirst();
+                    Lines.RemoveFirst();
+                    Lines.Last.Value.ChangeSecondEnd(Points.First.Value);
+                }
+                else if (Points.Last!.Equals(nodeRef))
+                {
+                    Points.RemoveLast();
+                    Lines.RemoveLast();
+                    Lines.Last.Value.ChangeSecondEnd(Points.First.Value);
+                }
+                else
+                {
+                    LinkedListNode<MyPoint>? pointTmp = Points.First;
+                    LinkedListNode<MyLine>? lineTmp = Lines.First;
+                    for (int i = 0; i < Points.Count; i++)
+                    {
+                        if (pointTmp.Equals(nodeRef))
+                        {
+                            break;
+                        }
+                        pointTmp = pointTmp.Next;
+                        lineTmp = lineTmp.Next;
+                    }
+                    lineTmp.Previous.Value.ChangeSecondEnd(pointTmp.Next.Value);
+                    Lines.Remove(lineTmp);
+                    Points.Remove(pointTmp);
+                }
+                if (Points.Count < 3)
+                {
+                    Points.Clear();
+                    Lines.Clear();
+                    Valid = false;
+                }
+            }
+        }
+
         public void AddPointInsideChosenEdge()
         {
             if (_chosenElement != null)
             {
                 MyLine line = (MyLine)(_chosenElement!);
-                Point newCoord = new Point((Math.Abs(line.Second.Center.X - line.First.Center.X) >> 1),
-                    (Math.Abs(line.Second.Center.Y - line.First.Center.Y)) >> 1);
+                int x_max = line.First.Center.X;
+                int x_min = line.Second.Center.X;
+                int y_max = line.First.Center.Y;
+                int y_min = line.Second.Center.Y;
+                (x_max, x_min) = x_min > x_max ? (x_min, x_max) : (x_max, x_min);
+                (y_max, y_min) = y_min > y_max ? (y_min, y_max) : (y_max, y_min);
+                Point newCoord = new Point(x_min + ((x_max - x_min) >> 1), y_min +((y_max - y_min) >> 1));
+
+
+
                 MyPoint tmpPoint = new MyPoint(newCoord, VertexRadius);
                 if (CheckIfVertexIsOnLegalPosition(tmpPoint) is null)
                 {
                     LinkedListNode<MyLine> lineNode = Lines.Find(line)!;
                     Lines.AddAfter(lineNode, new MyLine(tmpPoint, line.Second, Color.Black));
-                    //line.Second = tmpPoint;
                     line.ChangeSecondEnd(tmpPoint);
                     LinkedListNode<MyPoint> pointNode = Points.Find(line.First)!;
                     Points.AddAfter(pointNode, tmpPoint);
@@ -58,9 +108,9 @@ namespace CG1.Shapes
             }
         }
 
-        public Element? CheckIfClickedInSomething(Point pos)
+        public IElement? CheckIfClickedInSomething(Point pos)
         {
-            Element? element = null;
+            IElement? element = null;
             //foreach (MyPoint point in Points)
             
             element = CheckIfVertexIsOnLegalPosition(new MyPoint(pos, VertexRadius / 4));

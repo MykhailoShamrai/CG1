@@ -43,7 +43,7 @@ namespace CG1.Shapes
             });
 
             // And now for conter clockwise
-            if (Element.Cross(points[1], points[2], points[0]) < 0)
+            if (IElement.Cross(points[1], points[2], points[0]) < 0)
             {
                 Point tmp = new Point(points[1].X, points[1].Y);
                 points[1] = points[2];
@@ -53,9 +53,9 @@ namespace CG1.Shapes
 
         public bool CheckIfPointIsInside(Point point)
         {
-            return Element.Cross(points[1], point, points[0]) >= 0 &&
-                   Element.Cross(points[2], point, points[1]) >= 0 &&
-                   Element.Cross(points[0], point, points[2]) >= 0;
+            return IElement.Cross(points[1], point, points[0]) >= 0 &&
+                   IElement.Cross(points[2], point, points[1]) >= 0 &&
+                   IElement.Cross(points[0], point, points[2]) >= 0;
         }
     }
 }

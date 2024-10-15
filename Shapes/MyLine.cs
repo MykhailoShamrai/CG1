@@ -1,4 +1,5 @@
-﻿using System;
+﻿using CG1.ContextMenus;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
@@ -7,12 +8,20 @@ using System.Threading.Tasks;
 
 namespace CG1.Shapes
 {
-    public class MyLine: Element
+    public class MyLine: IElement
     {
         private int thicknes = 5;
         public MyPoint First { get; set; }
         public MyPoint Second { get; set; }
         public List<Triangle> BoundingBox { get; set; }
+        public static ContextMenuStrip Menu { get; } = new LineMenu();
+        public ContextMenuStrip GetMenu()
+        {
+            return Menu;
+        }
+
+        public Color Color { get; set; }
+
         public MyLine(MyPoint first, MyPoint second, Color color)
         {
             First = first;
