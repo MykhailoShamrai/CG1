@@ -65,9 +65,12 @@ namespace CG1
                     else if (!Polygon.Editing)
                     {
                         IElement tmp = Polygon.CheckIfClickedInSomething(me.Location);
-                        if (Polygon.TypeOfChosen == MyPolygon.ChosenType.Vertex)
+                        if (tmp != null)
                         {
-                            Polygon.Editing = true;
+                            if (Polygon.TypeOfChosen == MyPolygon.ChosenType.Vertex)
+                            {
+                                Polygon.Editing = true;
+                            }
                         }
                     }
                     else if (Polygon.Editing)
@@ -75,6 +78,7 @@ namespace CG1
                         Polygon.Editing = false;
                         Polygon.UnchooseElement();
                     }
+                    
                     break;
                 case MouseButtons.Right:
                     if (!Polygon.Valid)

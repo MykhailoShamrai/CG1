@@ -31,12 +31,12 @@ namespace CG1.Drawers
             g = Graphics.FromImage(canvas);
             pen.Color = color;
             g.DrawLine(pen, line.First.Center, line.Second.Center);            
-            g.DrawLine(penThick, line.BoundingBox[0].points[0], line.BoundingBox[0].points[1]);
-            g.DrawLine(penThick, line.BoundingBox[0].points[1], line.BoundingBox[0].points[2]);
-            g.DrawLine(penThick, line.BoundingBox[0].points[2], line.BoundingBox[0].points[0]);
-            g.DrawLine(penThick, line.BoundingBox[1].points[0], line.BoundingBox[1].points[1]);
-            g.DrawLine(penThick, line.BoundingBox[1].points[1], line.BoundingBox[1].points[2]);
-            g.DrawLine(penThick, line.BoundingBox[1].points[2], line.BoundingBox[1].points[0]);
+            //g.DrawLine(penThick, line.BoundingBox[0].points[0], line.BoundingBox[0].points[1]);
+            //g.DrawLine(penThick, line.BoundingBox[0].points[1], line.BoundingBox[0].points[2]);
+            //g.DrawLine(penThick, line.BoundingBox[0].points[2], line.BoundingBox[0].points[0]);
+            //g.DrawLine(penThick, line.BoundingBox[1].points[0], line.BoundingBox[1].points[1]);
+            //g.DrawLine(penThick, line.BoundingBox[1].points[1], line.BoundingBox[1].points[2]);
+            //g.DrawLine(penThick, line.BoundingBox[1].points[2], line.BoundingBox[1].points[0]);
         }
     }
 }

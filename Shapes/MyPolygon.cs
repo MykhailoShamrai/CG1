@@ -37,6 +37,63 @@ namespace CG1.Shapes
             SetDrawer(new LibraryDrawer());
         }
 
+        public bool CheckIfPointInsidePolygon(Point point)
+        {
+            // Vertical line
+            Point x1 = point;
+            Point x2 = new Point(point.X, 0);
+
+            int counter = 0;
+            foreach (MyLine line in Lines)
+            {
+                int tmp = IElement.CheckIfTwoLinesIntersect(x1, x2, line.First.Center, line.Second.Center);
+                if (tmp == 0)
+                {
+                    line.Color = Color.Red;
+                    counter++;
+                }
+                else if (tmp == 1)
+                {
+                    LinkedListNode<MyLine> lineNode = Lines.Find(line);
+                    LinkedListNode<MyLine> prevLineNode = lineNode.Previous is null ? Lines.Last : lineNode.Previous;
+                    LinkedListNode<MyLine> nextLineNode = lineNode.Next is null ? Lines.First : lineNode.Next;
+                    // Prosta i odcinek sa wspolliniowe
+                    if (IElement.Cross(x2, line.First.Center, x1) == 0 &&
+                        IElement.Cross(x2, line.Second.Center, x1) == 0)
+                    {
+                        // Szukam elementu listy, sprawdzam dla poprzedniej i nastepnej krawedz
+                        if (prevLineNode.Value.First.Center.X < point.X &&
+                            nextLineNode.Value.Second.Center.X > point.X)
+                            counter++;
+                        else
+                        {
+                            counter += 2;
+                        }
+                    }
+                    // Wierzcholek przecina nasza krawedz. Musimy sprawdzic krawedzie co sasiaduja
+                    else
+                    {
+                        int tmp1 = prevLineNode.Value.First.Center.X;
+                        int tmp2 = line.Second.Center.X;
+                        // If second end of our line is colinear with 
+                        if (IElement.Cross(x2, line.Second.Center, x1) == 0)
+                        {
+                            tmp1 = line.First.Center.X;
+                            tmp2 = nextLineNode.Value.Second.Center.X;
+                        }
+                        if ((tmp1 - point.X) *
+                        (tmp2 - point.X) < 0)
+                            counter++;
+                        else
+                        {
+                            counter += 2;
+                        }
+                    }
+                }
+            }
+            return ((counter & 1) == 1);
+        }
+
         public void DeleteChosenPoint()
         {
             if (_chosenElement != null)
