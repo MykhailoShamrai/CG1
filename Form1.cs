@@ -10,6 +10,7 @@ namespace CG1
         // Here is the place for all logic for main bitmap
         // I must remove this after
         private MyPoint[] tmpPoint = [new MyPoint(new Point(0, 0), 4), new MyPoint(new Point(0, 0), 4)];
+        private Point _startPointForDrag = new Point(0, 0);
         public Bitmap Bitmap { get; set; }
         internal MyPolygon Polygon { get; set; } = new MyPolygon();
         internal IDrawer Drawer { get; set; }
@@ -78,7 +79,7 @@ namespace CG1
                         Polygon.Editing = false;
                         Polygon.UnchooseElement();
                     }
-                    
+
                     break;
                 case MouseButtons.Right:
                     if (!Polygon.Valid)
@@ -101,9 +102,21 @@ namespace CG1
             pictureBoxMain.Refresh();
         }
 
-        private void pictureBoxMain_MouseMove(object sender, MouseEventArgs e)
+
+        private void pictureBoxMain_MouseDown(object sender, MouseEventArgs me)
         {
-            MouseEventArgs me = e;
+            if (me.Button == MouseButtons.Left && Polygon.Valid)
+            {
+                if (!Polygon.Dragging && Polygon.CheckIfPointInsidePolygon(me.Location))
+                {
+                    Polygon.Dragging = true;
+                    _startPointForDrag = me.Location;
+                }
+            }
+        }
+        private void pictureBoxMain_MouseMove(object sender, MouseEventArgs me)
+        {
+            //MouseEventArgs me = e;
             // If I want this work, I should change bitmaps 
             if (!Polygon.Valid)
             {
@@ -123,8 +136,28 @@ namespace CG1
                     Polygon.DrawPolygon(Bitmap);
                 }
             }
+            else if (Polygon.Dragging)
+            {
+                ClearBitmap(Bitmap);
+                int dx = me.Location.X - _startPointForDrag.X;
+                int dy = me.Location.Y - _startPointForDrag.Y;
+                foreach (MyPoint point in Polygon.Points)
+                {
+                    point.Center = new Point(point.Center.X + dx, point.Center.Y + dy);
+                }
+                _startPointForDrag = me.Location;
+                Polygon.DrawPolygon(Bitmap);
+            }
             pictureBoxMain.Refresh();
-            
+
+        }
+
+        private void pictureBoxMain_MouseUp(object sender, MouseEventArgs e)
+        {
+            if (Polygon.Valid && Polygon.Dragging)
+            {
+                Polygon.Dragging = false;
+            }
         }
     }
 }

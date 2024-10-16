@@ -43,7 +43,9 @@
             pictureBoxMain.TabIndex = 0;
             pictureBoxMain.TabStop = false;
             pictureBoxMain.Click += pictureBoxMain_Click;
+            pictureBoxMain.MouseDown += pictureBoxMain_MouseDown;
             pictureBoxMain.MouseMove += pictureBoxMain_MouseMove;
+            pictureBoxMain.MouseUp += pictureBoxMain_MouseUp;
             // 
             // contextMenuStrip1
             // 

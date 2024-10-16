@@ -12,6 +12,7 @@ namespace CG1.Shapes
 {
     public class MyPolygon
     {
+        public bool Dragging {  get; set; }
         public int VertexRadius { get; set; }
         public bool Valid { get; set; } = false;
         public bool Editing { get; set; } = false;
@@ -49,7 +50,7 @@ namespace CG1.Shapes
                 int tmp = IElement.CheckIfTwoLinesIntersect(x1, x2, line.First.Center, line.Second.Center);
                 if (tmp == 0)
                 {
-                    line.Color = Color.Red;
+                    //line.Color = Color.Red;
                     counter++;
                 }
                 else if (tmp == 1)
