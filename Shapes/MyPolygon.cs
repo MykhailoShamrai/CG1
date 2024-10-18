@@ -1,6 +1,7 @@
 ﻿using CG1.Drawers;
 using System;
 using System.Collections.Generic;
+using System.DirectoryServices.ActiveDirectory;
 using System.Drawing;
 using System.Linq;
 using System.Security.Cryptography.Xml;
@@ -28,6 +29,7 @@ namespace CG1.Shapes
             Edge,
             Bezier
         }
+
         public ChosenType TypeOfChosen { get; set; } = ChosenType.None;
         
         public MyPolygon()
@@ -202,10 +204,10 @@ namespace CG1.Shapes
             MyPoint tmp;
             for (int i = 0; i < Points.Count; i++)
             {
-                tmp = Points.ElementAt(i);
+                tmp = Points[i];
                 xx = tmp.Center.X;
                 yy = tmp.Center.Y;
-                if (Math.Abs((x - xx) * (x - xx) + (y - yy) * (y - yy)) < 4 * VertexRadius * point.Radius)
+                if (!(_chosenElement is MyPoint && Points[i].Equals((MyPoint)_chosenElement)) && Math.Abs((x - xx) * (x - xx) + (y - yy) * (y - yy)) < 4 * VertexRadius * point.Radius)
                 {
                     res = tmp;
                     break;
@@ -230,9 +232,29 @@ namespace CG1.Shapes
         public void DragVertex(Point vertexTmp)
         {
             if (_chosenElement is not null && TypeOfChosen == ChosenType.Vertex
-                && CheckIfVertexIsOnLegalPosition(new MyPoint(vertexTmp, VertexRadius)) is null)
+                && CheckIfVertexIsOnLegalPosition(new MyPoint(vertexTmp, VertexRadius)) is null) // here is bug, I can't check if I intersect with last point
             {
-                (_chosenElement as MyPoint)!.Center = vertexTmp;
+                // Here must take place all logick of changing positions of other vertives
+                // My idea is to move the chosen vertex, because it's always to be moved.
+                // Next we should go from chosen in right side of a list and from chosen to 
+                // left side of a list and move other verices according to constraints their have.
+                MyPoint draggedVertex = (MyPoint) _chosenElement;
+                draggedVertex.Center = vertexTmp;
+                int index = Points.IndexOf(draggedVertex);
+                int indexLeft = Math.Abs(index - 1) % Lines.Count;
+                int indexRight = (index + 1) % Lines.Count;
+                // Now we should go from chosen to right and from chosen to left
+                MyPoint? oldStateForLeft = new MyPoint(draggedVertex.Center, draggedVertex.Radius);
+                MyPoint? oldStateForRight = new MyPoint(draggedVertex.Center, draggedVertex.Radius);
+                int counter = 0;
+                while ((counter < Lines.Count - 2) && !(oldStateForLeft is null && oldStateForRight is null))
+                {
+                    indexLeft = index - counter - 1 >= 0 ? index - counter - 1: Lines.Count + index - counter - 1;
+                    indexRight = (index + counter) % Lines.Count;
+                    oldStateForLeft = Lines[indexLeft].ModifyForConstraints(oldStateForLeft!, false);
+                    oldStateForRight = Lines[indexRight].ModifyForConstraints(oldStateForRight!, true);
+                    counter++;
+                }
             }
         }
         public void SetDrawer(IDrawer drawer)
@@ -312,6 +334,18 @@ namespace CG1.Shapes
                 }
             }
             return res;
+        }
+
+        public void ChangeEdgeType(int length)
+        {
+            int index = Lines.IndexOf((MyLine)_chosenElement);
+            MyLine tmpLine = Lines[index];
+            Lines[index] = new MyLenghtLine(tmpLine, length);
+            _chosenElement = Lines[index].First;
+            TypeOfChosen = ChosenType.Vertex;
+            DragVertex(Lines[index].First.Center);
+
+            _chosenElement = null;
         }
     }
 }

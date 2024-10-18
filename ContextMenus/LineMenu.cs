@@ -13,7 +13,6 @@ namespace CG1.ContextMenus
         {
             ToolStripMenuItem addButton = new ToolStripMenuItem("Add vertex");
             ToolStripMenuItem lockButton = new ToolStripMenuItem("Lock the length");
-            lockButton.Enabled = false;
             Items.Add(addButton);
             Items.Add(lockButton);
         }

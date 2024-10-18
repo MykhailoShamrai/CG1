@@ -24,6 +24,12 @@ namespace CG1
             Drawer = new LibraryDrawer();
             MyLine.Menu.Items[0].Click += AddVertex_Click;
             MyPoint.Menu.Items[0].Click += DeleteVertex_Click;
+            MyLine.Menu.Items[1].Click += LenLock_Click;
+        }
+
+        private void LenLock_Click(object? sender, EventArgs e)
+        {
+            Polygon.ChangeEdgeType(50);
         }
 
         private void DeleteVertex_Click(object? sender, EventArgs e)
@@ -116,12 +122,9 @@ namespace CG1
         }
         private void pictureBoxMain_MouseMove(object sender, MouseEventArgs me)
         {
-            //MouseEventArgs me = e;
-            // If I want this work, I should change bitmaps 
             if (!Polygon.Valid)
             {
                 ClearBitmap(Bitmap);
-                //pictureBoxMain.Refresh();
                 Point point = me.Location;
                 tmpPoint[1].Center = point;
                 tmpPoint[0] = (Polygon.Points.Count == 0) ? null : Polygon.Points[^1];

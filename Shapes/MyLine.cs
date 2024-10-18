@@ -51,7 +51,7 @@ namespace CG1.Shapes
             CalcTheBoundingBox();
         }
 
-        private void CalcTheBoundingBox()
+        protected void CalcTheBoundingBox()
         {
             Point firstCenter = First.Center;
             Point secondCenter = Second.Center;
@@ -73,15 +73,26 @@ namespace CG1.Shapes
             BoundingBox[1].ChangeVertices(c, d, a);  
         }
 
-        private void OnPointChanged(object sender, PropertyChangedEventArgs e)
+        protected virtual void OnPointChanged(object sender, PropertyChangedEventArgs e)
         {
-            this.CalcTheBoundingBox();
+            CalcTheBoundingBox();
         }
 
         public bool CheckIfPointIsInsideBox(Point point)
         {
             bool res = BoundingBox[0].CheckIfPointIsInside(point) || BoundingBox[1].CheckIfPointIsInside(point);
             return res;
+        }
+
+        /// <summary>
+        /// The function should be used for modifying the edge and send 
+        /// </summary>
+        /// <param name="pointWhichIsDragged"></param>
+        /// <param name="index"></param>
+        /// <param name="direction"></param>
+        public virtual MyPoint? ModifyForConstraints(MyPoint pointWhichIsDragged, bool direction)
+        {
+            return null;
         }
     }
 }
