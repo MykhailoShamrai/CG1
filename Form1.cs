@@ -124,7 +124,7 @@ namespace CG1
                 //pictureBoxMain.Refresh();
                 Point point = me.Location;
                 tmpPoint[1].Center = point;
-                tmpPoint[0] = (Polygon.Points.Count == 0) ? null : Polygon.Points.Last.Value;
+                tmpPoint[0] = (Polygon.Points.Count == 0) ? null : Polygon.Points[^1];
                 Polygon.DrawPolygon(Bitmap, tmpPoint[0], tmpPoint[1]);
             }
             else if (Polygon.Editing)

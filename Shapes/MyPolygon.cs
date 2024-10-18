@@ -19,8 +19,8 @@ namespace CG1.Shapes
         private IElement? _chosenElement = null;
         public Color Color { get; set; }
         private IDrawer _drawer = null;
-        public LinkedList<MyPoint> Points { get; set; }
-        public LinkedList<MyLine> Lines { get; set; }
+        public List<MyPoint> Points { get; set; }
+        public List<MyLine> Lines { get; set; }
         public enum ChosenType
         {
             None,
@@ -32,8 +32,8 @@ namespace CG1.Shapes
         
         public MyPolygon()
         {
-            Points = new LinkedList<MyPoint>();
-            Lines = new LinkedList<MyLine>();
+            Points = new List<MyPoint>();
+            Lines = new List<MyLine>();
             VertexRadius = 6;
             SetDrawer(new LibraryDrawer());
         }
@@ -45,8 +45,9 @@ namespace CG1.Shapes
             Point x2 = new Point(point.X, 0);
 
             int counter = 0;
-            foreach (MyLine line in Lines)
+            for (int i = 0; i < Lines.Count; i++)
             {
+                MyLine line = Lines[i];
                 int tmp = IElement.CheckIfTwoLinesIntersect(x1, x2, line.First.Center, line.Second.Center);
                 if (tmp == 0)
                 {
@@ -55,16 +56,15 @@ namespace CG1.Shapes
                 }
                 else if (tmp == 1)
                 {
-                    LinkedListNode<MyLine> lineNode = Lines.Find(line);
-                    LinkedListNode<MyLine> prevLineNode = lineNode.Previous is null ? Lines.Last : lineNode.Previous;
-                    LinkedListNode<MyLine> nextLineNode = lineNode.Next is null ? Lines.First : lineNode.Next;
+                    MyLine prevLine = i == 0 ? Lines[^1] : Lines[i - 1];
+                    MyLine nextLine = i == Lines.Count - 1 ? Lines[0] : Lines[i + 1];
                     // Prosta i odcinek sa wspolliniowe
                     if (IElement.Cross(x2, line.First.Center, x1) == 0 &&
                         IElement.Cross(x2, line.Second.Center, x1) == 0)
                     {
                         // Szukam elementu listy, sprawdzam dla poprzedniej i nastepnej krawedz
-                        if (prevLineNode.Value.First.Center.X < point.X &&
-                            nextLineNode.Value.Second.Center.X > point.X)
+                        if (prevLine.First.Center.X < point.X &&
+                            nextLine.Second.Center.X > point.X)
                             counter++;
                         else
                         {
@@ -74,13 +74,13 @@ namespace CG1.Shapes
                     // Wierzcholek przecina nasza krawedz. Musimy sprawdzic krawedzie co sasiaduja
                     else
                     {
-                        int tmp1 = prevLineNode.Value.First.Center.X;
+                        int tmp1 = prevLine.First.Center.X;
                         int tmp2 = line.Second.Center.X;
                         // If second end of our line is colinear with 
                         if (IElement.Cross(x2, line.Second.Center, x1) == 0)
                         {
                             tmp1 = line.First.Center.X;
-                            tmp2 = nextLineNode.Value.Second.Center.X;
+                            tmp2 = nextLine.Second.Center.X;
                         }
                         if ((tmp1 - point.X) *
                         (tmp2 - point.X) < 0)
@@ -100,35 +100,27 @@ namespace CG1.Shapes
             if (_chosenElement != null)
             {
                 MyPoint point = (MyPoint)_chosenElement;
-                LinkedListNode<MyPoint> nodeRef = Points.Find(point)!;
-                if (Points.First!.Equals(nodeRef))
+                //LinkedListNode<MyPoint> nodeRef = Points.Find(point)!;
+                if (Points[0].Equals(point))
                 {
-                    Points.RemoveFirst();
-                    Lines.RemoveFirst();
-                    Lines.Last.Value.ChangeSecondEnd(Points.First.Value);
+                    Points.RemoveAt(0);
+                    Lines.RemoveAt(0);
+                    Lines[^1].ChangeSecondEnd(Points[0]);
                 }
-                else if (Points.Last!.Equals(nodeRef))
+                else if (Points[^1].Equals(point))
                 {
-                    Points.RemoveLast();
-                    Lines.RemoveLast();
-                    Lines.Last.Value.ChangeSecondEnd(Points.First.Value);
+                    Points.RemoveAt(Points.Count - 1);
+                    Lines.RemoveAt(Lines.Count - 1);
+                    Lines[^1].ChangeSecondEnd(Points[0]);
                 }
                 else
                 {
-                    LinkedListNode<MyPoint>? pointTmp = Points.First;
-                    LinkedListNode<MyLine>? lineTmp = Lines.First;
-                    for (int i = 0; i < Points.Count; i++)
-                    {
-                        if (pointTmp.Equals(nodeRef))
-                        {
-                            break;
-                        }
-                        pointTmp = pointTmp.Next;
-                        lineTmp = lineTmp.Next;
-                    }
-                    lineTmp.Previous.Value.ChangeSecondEnd(pointTmp.Next.Value);
-                    Lines.Remove(lineTmp);
-                    Points.Remove(pointTmp);
+                    int index = Points.IndexOf(point);
+                    MyLine lineTmp = Lines[index];
+                    MyPoint pointTmp = Points[index + 1];
+                    Lines[index - 1].ChangeSecondEnd(pointTmp);
+                    Lines.RemoveAt(index);
+                    Points.RemoveAt(index);
                 }
                 if (Points.Count < 3)
                 {
@@ -157,11 +149,10 @@ namespace CG1.Shapes
                 MyPoint tmpPoint = new MyPoint(newCoord, VertexRadius);
                 if (CheckIfVertexIsOnLegalPosition(tmpPoint) is null)
                 {
-                    LinkedListNode<MyLine> lineNode = Lines.Find(line)!;
-                    Lines.AddAfter(lineNode, new MyLine(tmpPoint, line.Second, Color.Black));
+                    int index = Lines.IndexOf(line);
+                    Lines.Insert(index + 1, new MyLine(tmpPoint, line.Second, Color.Black));
                     line.ChangeSecondEnd(tmpPoint);
-                    LinkedListNode<MyPoint> pointNode = Points.Find(line.First)!;
-                    Points.AddAfter(pointNode, tmpPoint);
+                    Points.Insert(index + 1, tmpPoint);
                 }
             }
         }
@@ -169,11 +160,8 @@ namespace CG1.Shapes
         public IElement? CheckIfClickedInSomething(Point pos)
         {
             IElement? element = null;
-            //foreach (MyPoint point in Points)
             
             element = CheckIfVertexIsOnLegalPosition(new MyPoint(pos, VertexRadius / 4));
-            //if (element != null)
-            //break;
 
             if (element is null)
             {
@@ -226,16 +214,6 @@ namespace CG1.Shapes
             return res;
         }
 
-        // I should implement choosing an edge. For this I want rename function and reimplement 
-        // chicking if i click in something. 
-        public bool CheckIfClickedInVertex(Point point)
-        {
-            // Maybe I should change it and devide into two functions
-            //if (_chosenElement != null)
-            //    _chosenElement.Color = Color.Black;
-            MyPoint? tmp = CheckIfVertexIsOnLegalPosition(new MyPoint(point, VertexRadius / 4));
-            return tmp is not null;
-        }
 
         public void UnchooseElement()
         {
@@ -319,18 +297,18 @@ namespace CG1.Shapes
             if (Points.Count == 0)
             {
                 Editing = true;
-                Points.AddLast(curp);
+                Points.Add(curp);
             }
             else if (res)
             {
                 if (Valid)
                 {
-                    Lines.AddLast(new MyLine(Points.Last!.Value, Points.First!.Value, Color.Black));
+                    Lines.Add(new MyLine(Points[^1], Points[0], Color.Black));
                 }
                 else
                 {
-                    Lines.AddLast(new MyLine(Points.Last!.Value, curp, Color.Black));
-                    Points.AddLast(curp);
+                    Lines.Add(new MyLine(Points[^1], curp, Color.Black));
+                    Points.Add(curp);
                 }
             }
             return res;
