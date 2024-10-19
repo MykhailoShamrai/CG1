@@ -232,27 +232,30 @@ namespace CG1.Shapes
         public void DragVertex(Point vertexTmp)
         {
             if (_chosenElement is not null && TypeOfChosen == ChosenType.Vertex
-                && CheckIfVertexIsOnLegalPosition(new MyPoint(vertexTmp, VertexRadius)) is null) // here is bug, I can't check if I intersect with last point
+                && CheckIfVertexIsOnLegalPosition(new MyPoint(vertexTmp, VertexRadius)) is null)
             {
-                // Here must take place all logick of changing positions of other vertives
-                // My idea is to move the chosen vertex, because it's always to be moved.
-                // Next we should go from chosen in right side of a list and from chosen to 
-                // left side of a list and move other verices according to constraints their have.
-                MyPoint draggedVertex = (MyPoint) _chosenElement;
+                MyPoint draggedVertex = (MyPoint)_chosenElement;
                 draggedVertex.Center = vertexTmp;
                 int index = Points.IndexOf(draggedVertex);
-                int indexLeft = Math.Abs(index - 1) % Lines.Count;
-                int indexRight = (index + 1) % Lines.Count;
-                // Now we should go from chosen to right and from chosen to left
-                MyPoint? oldStateForLeft = new MyPoint(draggedVertex.Center, draggedVertex.Radius);
-                MyPoint? oldStateForRight = new MyPoint(draggedVertex.Center, draggedVertex.Radius);
+
+                bool leftCont = true;
+                bool rightCont = true;
+
                 int counter = 0;
-                while ((counter < Lines.Count - 2) && !(oldStateForLeft is null && oldStateForRight is null))
+                while ((leftCont || rightCont) && counter < Lines.Count - 1)
                 {
-                    indexLeft = index - counter - 1 >= 0 ? index - counter - 1: Lines.Count + index - counter - 1;
-                    indexRight = (index + counter) % Lines.Count;
-                    oldStateForLeft = Lines[indexLeft].ModifyForConstraints(oldStateForLeft!, false);
-                    oldStateForRight = Lines[indexRight].ModifyForConstraints(oldStateForRight!, true);
+                    int indexLeft = index - counter - 1 >= 0 ? index - counter - 1 : Lines.Count + index - counter - 1;
+                    int indexRight = (index + counter) % Lines.Count;
+
+                    if (leftCont)
+                    {
+                        leftCont = Lines[indexLeft].ModifyForConstraints(false);
+                    }
+
+                    if (rightCont)
+                    {
+                        rightCont = Lines[indexRight].ModifyForConstraints(true);
+                    }
                     counter++;
                 }
             }
@@ -344,7 +347,6 @@ namespace CG1.Shapes
             _chosenElement = Lines[index].First;
             TypeOfChosen = ChosenType.Vertex;
             DragVertex(Lines[index].First.Center);
-
             _chosenElement = null;
         }
     }

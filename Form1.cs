@@ -29,7 +29,10 @@ namespace CG1
 
         private void LenLock_Click(object? sender, EventArgs e)
         {
-            Polygon.ChangeEdgeType(50);
+            Polygon.ChangeEdgeType(100);
+            ClearBitmap(Bitmap);
+            Polygon.DrawPolygon(Bitmap);
+            pictureBoxMain.Refresh();
         }
 
         private void DeleteVertex_Click(object? sender, EventArgs e)

@@ -90,9 +90,9 @@ namespace CG1.Shapes
         /// <param name="pointWhichIsDragged"></param>
         /// <param name="index"></param>
         /// <param name="direction"></param>
-        public virtual MyPoint? ModifyForConstraints(MyPoint pointWhichIsDragged, bool direction)
+        public virtual bool ModifyForConstraints(bool direction)
         {
-            return null;
+            return false;
         }
     }
 }
