@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Runtime.CompilerServices;
 using System.Security.Cryptography;
 using System.Text;
 using System.Threading.Tasks;
@@ -39,17 +40,22 @@ namespace CG1.Shapes
             Second.Center = newPosSecond;
         }
 
-        public override bool ModifyForConstraints(bool direction)
+        public override bool ModifyForConstraints(bool direction, MyPoint startVertex)
         {
+            
 
             MyPoint pointToMove = direction ? this.Second : this.First;
             MyPoint pointThatWasMoved = direction ? this.First : this.Second;
+
+            if (pointToMove.Equals(startVertex))
+                return false;
 
             // For point that was moved we already have changes in an object
             // dx - changes in x axis
             int d = IsVertical ? pointThatWasMoved.Center.X - pointToMove.Center.X : 
                 pointThatWasMoved.Center.Y - pointToMove.Center.Y;
-            pointToMove.Center = new Point(pointThatWasMoved.Center.X, pointToMove.Center.Y);
+            pointToMove.Center = IsVertical ? new Point(pointThatWasMoved.Center.X, pointToMove.Center.Y) : 
+                new Point(pointToMove.Center.X, pointThatWasMoved.Center.Y);
 
 
             if (Math.Abs(d) > 0)

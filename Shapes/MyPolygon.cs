@@ -242,12 +242,28 @@ namespace CG1.Shapes
                 bool rightCont = true;
 
                 int counter = 0;
-                while ((leftCont || rightCont) && counter < Lines.Count)
+                while ((leftCont || rightCont))
                 {
-                    int indexLeft = (index - counter - 1 + Lines.Count) % Lines.Count;
+                    int indexLeft = index - counter - 1 >= 0 ? index - counter - 1 : Lines.Count + index - counter - 1;
                     int indexRight = (index + counter) % Lines.Count;
-                    leftCont = Lines[indexLeft].ModifyForConstraints(false);
-                    rightCont = Lines[indexRight].ModifyForConstraints(true);                   
+                    if (leftCont)
+                        leftCont = Lines[indexLeft].ModifyForConstraints(false, draggedVertex);
+                    if (rightCont)
+                        rightCont = Lines[indexRight].ModifyForConstraints(true, draggedVertex);                   
+                    counter++;
+                }
+                leftCont = true;
+                rightCont = true;
+                counter = 0;
+                while ((leftCont || rightCont))
+                {
+                    int indexLeft = index - counter - 1 >= 0 ? index - counter - 1 : Lines.Count + index - counter - 1;
+                    int indexRight = (index + counter) % Lines.Count;
+                    if (rightCont)
+                        rightCont = Lines[indexRight].ModifyForConstraints(true, draggedVertex);
+                    if (leftCont)
+                        leftCont = Lines[indexLeft].ModifyForConstraints(false, draggedVertex);
+                   
                     counter++;
                 }
             }

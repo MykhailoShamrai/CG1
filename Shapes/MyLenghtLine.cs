@@ -50,11 +50,12 @@ namespace CG1.Shapes
             Second.Center = newPosSecond;
         }
 
-        public override bool ModifyForConstraints(bool direction)
+        public override bool ModifyForConstraints(bool direction, MyPoint startVertex)
         {
             MyPoint pointToMove = direction ? this.Second : this.First;
             MyPoint pointThatWasMoved = direction ? this.First : this.Second;
-
+            if (pointToMove.Equals(startVertex)) 
+                return false;
             // Compute the current vector between the moved point and the point to move
             int dx = pointToMove.Center.X - pointThatWasMoved.Center.X;
             int dy = pointToMove.Center.Y - pointThatWasMoved.Center.Y;
