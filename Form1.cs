@@ -7,8 +7,6 @@ namespace CG1
 {
     public partial class Form1 : Form
     {
-        // Here is the place for all logic for main bitmap
-        // I must remove this after
         private MyPoint[] tmpPoint = [new MyPoint(new Point(0, 0), 4), new MyPoint(new Point(0, 0), 4)];
         private Point _startPointForDrag = new Point(0, 0);
         public Bitmap Bitmap { get; set; }
@@ -25,11 +23,23 @@ namespace CG1
             MyLine.Menu.Items[0].Click += AddVertex_Click;
             MyPoint.Menu.Items[0].Click += DeleteVertex_Click;
             MyLine.Menu.Items[1].Click += LenLock_Click;
+            MyLine.Menu.Items[2].Click += VertLock_Click;
+        }
+
+        private void VertLock_Click(object? sender, EventArgs e)
+        {
+            Polygon.ChangeEdgeType(true);
+            ClearBitmap(Bitmap);
+            Polygon.DrawPolygon(Bitmap);
+            pictureBoxMain.Refresh();
         }
 
         private void LenLock_Click(object? sender, EventArgs e)
         {
+
             Polygon.ChangeEdgeType(100);
+
+
             ClearBitmap(Bitmap);
             Polygon.DrawPolygon(Bitmap);
             pictureBoxMain.Refresh();

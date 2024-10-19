@@ -50,7 +50,6 @@ namespace CG1.Shapes
             Second.Center = newPosSecond;
         }
 
-        // oldStateOfDraggedPoint is redundant
         public override bool ModifyForConstraints(bool direction)
         {
             MyPoint pointToMove = direction ? this.Second : this.First;
@@ -60,16 +59,17 @@ namespace CG1.Shapes
             int dx = pointToMove.Center.X - pointThatWasMoved.Center.X;
             int dy = pointToMove.Center.Y - pointThatWasMoved.Center.Y;
             double currentLength = Math.Sqrt(dx * dx + dy * dy);
-            // Calculate the unit vector
+
             double ux = dx / currentLength;
             double uy = dy / currentLength;
+
             // Now set the new position of pointToMove by moving along this unit vector
             Point newPosition = new Point(
-                (int)(pointThatWasMoved.Center.X + Length * ux),  // Length is the locked length of the edge
-                (int)(pointThatWasMoved.Center.Y + Length * uy)
+                ((int)(pointThatWasMoved.Center.X + Length * ux)),  // Length is the locked length of the edge
+                ((int)(pointThatWasMoved.Center.Y + Length * uy))
             );
-            // Finally, update the position of the pointToMove
             pointToMove.Center = newPosition;
+
             return true;
         }
     }

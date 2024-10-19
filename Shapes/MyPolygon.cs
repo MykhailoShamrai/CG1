@@ -242,20 +242,12 @@ namespace CG1.Shapes
                 bool rightCont = true;
 
                 int counter = 0;
-                while ((leftCont || rightCont) && counter < Lines.Count - 1)
+                while ((leftCont || rightCont) && counter < Lines.Count)
                 {
-                    int indexLeft = index - counter - 1 >= 0 ? index - counter - 1 : Lines.Count + index - counter - 1;
+                    int indexLeft = (index - counter - 1 + Lines.Count) % Lines.Count;
                     int indexRight = (index + counter) % Lines.Count;
-
-                    if (leftCont)
-                    {
-                        leftCont = Lines[indexLeft].ModifyForConstraints(false);
-                    }
-
-                    if (rightCont)
-                    {
-                        rightCont = Lines[indexRight].ModifyForConstraints(true);
-                    }
+                    leftCont = Lines[indexLeft].ModifyForConstraints(false);
+                    rightCont = Lines[indexRight].ModifyForConstraints(true);                   
                     counter++;
                 }
             }
@@ -344,10 +336,27 @@ namespace CG1.Shapes
             int index = Lines.IndexOf((MyLine)_chosenElement);
             MyLine tmpLine = Lines[index];
             Lines[index] = new MyLenghtLine(tmpLine, length);
-            _chosenElement = Lines[index].First;
+            //_chosenElement = Lines[index].First;
             TypeOfChosen = ChosenType.Vertex;
             DragVertex(Lines[index].First.Center);
+            DragVertex(Lines[index].Second.Center);
             _chosenElement = null;
+        }
+
+        // true means vertical, false means horizontal
+        public void ChangeEdgeType(bool vertOrHorizontal)
+        {
+            if (vertOrHorizontal)
+            {
+                int index = Lines.IndexOf((MyLine)_chosenElement);
+                MyLine tmpLine = Lines[index];
+                Lines[index] = new MyVerticalLine(tmpLine, true);
+                //_chosenElement = Lines[index].First;
+                TypeOfChosen = ChosenType.Vertex;
+                DragVertex(Lines[index].First.Center);
+                DragVertex(Lines[index].Second.Center);
+                _chosenElement = null;
+            }
         }
     }
 }

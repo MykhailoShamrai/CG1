@@ -13,8 +13,10 @@ namespace CG1.ContextMenus
         {
             ToolStripMenuItem addButton = new ToolStripMenuItem("Add vertex");
             ToolStripMenuItem lockButton = new ToolStripMenuItem("Lock the length");
+            ToolStripMenuItem makeVertical = new ToolStripMenuItem("Create vertical edge");
             Items.Add(addButton);
             Items.Add(lockButton);
+            Items.Add(makeVertical);
         }
     }
 }

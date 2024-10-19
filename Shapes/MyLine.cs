@@ -5,6 +5,7 @@ using System.ComponentModel;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using static System.Windows.Forms.LinkLabel;
 
 namespace CG1.Shapes
 {
@@ -34,7 +35,6 @@ namespace CG1.Shapes
             Second.PropertyChanged += OnPointChanged;
             CalcTheBoundingBox();
         }
-
         public void ChangeFirstEnd(MyPoint point)
         {
             First.PropertyChanged -= OnPointChanged;
