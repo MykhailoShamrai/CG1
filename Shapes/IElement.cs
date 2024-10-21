@@ -9,7 +9,7 @@ namespace CG1.Shapes
     public interface IElement
     {
         public ContextMenuStrip GetMenu();
-        public static abstract ContextMenuStrip Menu { get; }
+        public abstract ContextMenuStrip Menu { get; set; }
         public Color Color { get; set; }
         public static int Cross(Point x, Point y, Point o)
         {

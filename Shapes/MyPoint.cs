@@ -12,6 +12,7 @@ namespace CG1.Shapes
     public class MyPoint: IElement
     {
         private Point _center;
+        public MyPolygon ParentPolygon { get; set; }
         public Point Center { get => _center; set 
             {
                 if (_center.X != value.X || _center.Y != value.Y)
@@ -22,7 +23,7 @@ namespace CG1.Shapes
             }}
         public int Radius { get; set; }
 
-        public static ContextMenuStrip Menu { get; } = new PointMenu();
+        public ContextMenuStrip Menu { get; set; } = new PointMenu();
 
         public Color Color { get; set; }
 
@@ -38,11 +39,13 @@ namespace CG1.Shapes
             return Menu;
         }
 
-        public MyPoint(Point center, int radius)
+        public MyPoint(Point center, int radius, MyPolygon polygon)
         {
+            ParentPolygon = polygon;
             Center = center;
             Radius = radius;
             Color = Color.Black;
+            Menu.Items[0].Click += polygon.DeleteVertex_Click;
         }
     }
 }

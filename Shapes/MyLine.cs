@@ -12,10 +12,11 @@ namespace CG1.Shapes
     public class MyLine: IElement
     {
         private int thicknes = 5;
+        public MyPolygon ParentPolygon { get; set; }
         public MyPoint First { get; set; }
         public MyPoint Second { get; set; }
         public List<Triangle> BoundingBox { get; set; }
-        public static ContextMenuStrip Menu { get; } = new LineMenu();
+        public ContextMenuStrip Menu { get; set; } = new LineMenu();
         public ContextMenuStrip GetMenu()
         {
             return Menu;
@@ -23,8 +24,9 @@ namespace CG1.Shapes
 
         public Color Color { get; set; }
 
-        public MyLine(MyPoint first, MyPoint second, Color color)
+        public MyLine(MyPoint first, MyPoint second, Color color, MyPolygon polygon)
         {
+            ParentPolygon = polygon;
             First = first;
             Second = second;
             Color = color;
@@ -34,7 +36,14 @@ namespace CG1.Shapes
             First.PropertyChanged += OnPointChanged;
             Second.PropertyChanged += OnPointChanged;
             CalcTheBoundingBox();
+
+            Menu.Items[0].Click += polygon.AddVertex_Click;
+            Menu.Items[1].Click += polygon.LenLock_Click;
+            Menu.Items[2].Click += polygon.VertLock_Click;
+            Menu.Items[3].Click += polygon.HorizontalLock_Click;
         }
+
+
         public void ChangeFirstEnd(MyPoint point)
         {
             First.PropertyChanged -= OnPointChanged;
@@ -84,15 +93,15 @@ namespace CG1.Shapes
             return res;
         }
 
-        /// <summary>
-        /// The function should be used for modifying the edge and send 
-        /// </summary>
-        /// <param name="pointWhichIsDragged"></param>
-        /// <param name="index"></param>
-        /// <param name="direction"></param>
+
         public virtual bool ModifyForConstraints(bool direction, MyPoint startVertex)
         {
             return false;
+        }
+
+        public virtual void ChangeMenuWhileCreating(MyLine LeftLine, MyLine RightLine)
+        {
+            return;
         }
     }
 }

@@ -12,21 +12,22 @@ namespace CG1.Shapes
     internal class MyLenghtLine : MyLine
     {
         public int Length {  get; set; }
-        public MyLenghtLine(MyPoint first, MyPoint second, Color color) : base(first, second, color)
+        public MyLenghtLine(MyPoint first, MyPoint second, Color color, MyPolygon polygon) : base(first, second, color, polygon)
         {
+            
             Length = 0;
             Color = Color.MediumVioletRed;
             CountTwoPositionsOnSameLine();
         }
 
-        public MyLenghtLine(MyPoint first, MyPoint second, Color color, int len) : base(first, second, color)
+        public MyLenghtLine(MyPoint first, MyPoint second, Color color, int len, MyPolygon polygon) : base(first, second, color, polygon)
         {
             Length = len;
             Color = Color.MediumVioletRed;
             CountTwoPositionsOnSameLine();
         }
 
-        public MyLenghtLine(MyLine line, int len): base(line.First, line.Second, line.Color)
+        public MyLenghtLine(MyLine line, int len): base(line.First, line.Second, line.Color, line.ParentPolygon)
         {
             Length = len;
             Color = Color.MediumVioletRed;

@@ -1,6 +1,7 @@
 ﻿using CG1.Drawers;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics.Metrics;
 using System.DirectoryServices.ActiveDirectory;
 using System.Drawing;
 using System.Linq;
@@ -13,7 +14,8 @@ namespace CG1.Shapes
 {
     public class MyPolygon
     {
-        public bool Dragging {  get; set; }
+        private Form1 _form1;
+        public bool Dragging { get; set; }
         public int VertexRadius { get; set; }
         public bool Valid { get; set; } = false;
         public bool Editing { get; set; } = false;
@@ -31,9 +33,10 @@ namespace CG1.Shapes
         }
 
         public ChosenType TypeOfChosen { get; set; } = ChosenType.None;
-        
-        public MyPolygon()
+
+        public MyPolygon(Form1 owner)
         {
+            _form1 = owner;
             Points = new List<MyPoint>();
             Lines = new List<MyLine>();
             VertexRadius = 6;
@@ -144,15 +147,15 @@ namespace CG1.Shapes
                 int y_min = line.Second.Center.Y;
                 (x_max, x_min) = x_min > x_max ? (x_min, x_max) : (x_max, x_min);
                 (y_max, y_min) = y_min > y_max ? (y_min, y_max) : (y_max, y_min);
-                Point newCoord = new Point(x_min + ((x_max - x_min) >> 1), y_min +((y_max - y_min) >> 1));
+                Point newCoord = new Point(x_min + ((x_max - x_min) >> 1), y_min + ((y_max - y_min) >> 1));
 
 
 
-                MyPoint tmpPoint = new MyPoint(newCoord, VertexRadius);
+                MyPoint tmpPoint = new MyPoint(newCoord, VertexRadius, this);
                 if (CheckIfVertexIsOnLegalPosition(tmpPoint) is null)
                 {
                     int index = Lines.IndexOf(line);
-                    Lines.Insert(index + 1, new MyLine(tmpPoint, line.Second, Color.Black));
+                    Lines.Insert(index + 1, new MyLine(tmpPoint, line.Second, Color.Black, this));
                     line.ChangeSecondEnd(tmpPoint);
                     Points.Insert(index + 1, tmpPoint);
                 }
@@ -162,8 +165,8 @@ namespace CG1.Shapes
         public IElement? CheckIfClickedInSomething(Point pos)
         {
             IElement? element = null;
-            
-            element = CheckIfVertexIsOnLegalPosition(new MyPoint(pos, VertexRadius / 4));
+
+            element = CheckIfVertexIsOnLegalPosition(new MyPoint(pos, VertexRadius / 4, this));
 
             if (element is null)
             {
@@ -232,7 +235,7 @@ namespace CG1.Shapes
         public void DragVertex(Point vertexTmp)
         {
             if (_chosenElement is not null && TypeOfChosen == ChosenType.Vertex
-                && CheckIfVertexIsOnLegalPosition(new MyPoint(vertexTmp, VertexRadius)) is null)
+                && CheckIfVertexIsOnLegalPosition(new MyPoint(vertexTmp, VertexRadius, this)) is null)
             {
                 MyPoint draggedVertex = (MyPoint)_chosenElement;
                 draggedVertex.Center = vertexTmp;
@@ -249,7 +252,7 @@ namespace CG1.Shapes
                     if (leftCont)
                         leftCont = Lines[indexLeft].ModifyForConstraints(false, draggedVertex);
                     if (rightCont)
-                        rightCont = Lines[indexRight].ModifyForConstraints(true, draggedVertex);                   
+                        rightCont = Lines[indexRight].ModifyForConstraints(true, draggedVertex);
                     counter++;
                 }
                 leftCont = true;
@@ -263,14 +266,14 @@ namespace CG1.Shapes
                         rightCont = Lines[indexRight].ModifyForConstraints(true, draggedVertex);
                     if (leftCont)
                         leftCont = Lines[indexLeft].ModifyForConstraints(false, draggedVertex);
-                   
+
                     counter++;
                 }
             }
         }
         public void SetDrawer(IDrawer drawer)
         {
-            _drawer = drawer; 
+            _drawer = drawer;
         }
 
         public bool CheckIfAnyElementIsChosen()
@@ -293,7 +296,7 @@ namespace CG1.Shapes
             _drawer.Draw(tmp, Color.Green, bitmap);
             if (lastPoint != null)
             {
-                _drawer.Draw(new MyLine(lastPoint, tmp, Color.Green), Color.Green, bitmap);
+                _drawer.Draw(new MyLine(lastPoint, tmp, Color.Green, this), Color.Green, bitmap);
             }
         }
         public bool AddPoint(Point point)
@@ -307,7 +310,7 @@ namespace CG1.Shapes
             int y = center.Y;
             int xx = 0;
             int yy = 0;
-            MyPoint curp = new MyPoint(center, VertexRadius);
+            MyPoint curp = new MyPoint(center, VertexRadius, this);
             if (Points.Count > 0)
             {
                 // If click is in border of first vertex, we must end creating process.
@@ -336,22 +339,27 @@ namespace CG1.Shapes
             {
                 if (Valid)
                 {
-                    Lines.Add(new MyLine(Points[^1], Points[0], Color.Black));
+                    Lines.Add(new MyLine(Points[^1], Points[0], Color.Black, this));
                 }
                 else
                 {
-                    Lines.Add(new MyLine(Points[^1], curp, Color.Black));
+                    Lines.Add(new MyLine(Points[^1], curp, Color.Black, this));
                     Points.Add(curp);
                 }
             }
             return res;
         }
 
+
+        // It's possible to merge this function 
         public void ChangeEdgeType(int length)
         {
             int index = Lines.IndexOf((MyLine)_chosenElement);
             MyLine tmpLine = Lines[index];
             Lines[index] = new MyLenghtLine(tmpLine, length);
+            int indexLeft = index - 1 >= 0 ? index - 1 : Lines.Count + index - 1;
+            int indexRight = (index + 1) % Lines.Count;
+            Lines[index].ChangeMenuWhileCreating(Lines[indexLeft], Lines[indexRight]);
             _chosenElement = Lines[index].First;
             TypeOfChosen = ChosenType.Vertex;
             DragVertex(Lines[index].First.Center);
@@ -365,11 +373,58 @@ namespace CG1.Shapes
             int index = Lines.IndexOf((MyLine)_chosenElement);
             MyLine tmpLine = Lines[index];
             Lines[index] = vertOrHorizontal ? new MyVerticalLine(tmpLine, true) : new MyVerticalLine(tmpLine, false);
+            int indexLeft = index - 1 >= 0 ? index - 1 : Lines.Count + index - 1;
+            int indexRight = (index + 1) % Lines.Count;
+            Lines[index].ChangeMenuWhileCreating(Lines[indexLeft], Lines[indexRight]);
             _chosenElement = Lines[index].First;
             TypeOfChosen = ChosenType.Vertex;
             DragVertex(Lines[index].First.Center);
             DragVertex(Lines[index].Second.Center);
             _chosenElement = null;
         }
+
+
+        // It shouldn't look like that
+        public void HorizontalLock_Click(object? sender, EventArgs e)
+        {
+            ChangeEdgeType(false);
+            Form1.ClearBitmap(_form1.Bitmap);
+            DrawPolygon(_form1.Bitmap);
+            _form1.Refresh();
+        }
+
+        public void VertLock_Click(object? sender, EventArgs e)
+        {
+            ChangeEdgeType(true);
+            Form1.ClearBitmap(_form1.Bitmap);
+            DrawPolygon(_form1.Bitmap);
+            _form1.Refresh();
+        }
+
+        public void LenLock_Click(object? sender, EventArgs e)
+        {
+            // here must be a massage box to write a length
+            ChangeEdgeType(100);
+            Form1.ClearBitmap(_form1.Bitmap);
+            DrawPolygon(_form1.Bitmap);
+            _form1.Refresh();
+        }
+
+        public void DeleteVertex_Click(object? sender, EventArgs e)
+        { 
+            DeleteChosenPoint();
+            Form1.ClearBitmap(_form1.Bitmap);
+            DrawPolygon(_form1.Bitmap);
+            _form1.Refresh();
+        }
+
+        public void AddVertex_Click(object? sender, EventArgs e)
+        {
+            AddPointInsideChosenEdge();
+            Form1.ClearBitmap(_form1.Bitmap);
+            DrawPolygon(_form1.Bitmap);
+            _form1.Refresh();
+        }
+
     }
 }

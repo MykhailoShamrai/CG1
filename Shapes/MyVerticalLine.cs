@@ -1,4 +1,5 @@
-﻿using System;
+﻿using CG1.ContextMenus;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Runtime.CompilerServices;
@@ -12,7 +13,7 @@ namespace CG1.Shapes
     {
         public bool IsVertical { get; set; }
         public bool IsHorizontal { get; set; }
-        public MyVerticalLine(MyPoint first, MyPoint second, Color color, bool isVertical) : base(first, second, color)
+        public MyVerticalLine(MyPoint first, MyPoint second, Color color, bool isVertical, MyPolygon polygon) : base(first, second, color, polygon)
         {
             IsVertical = isVertical;
             IsHorizontal = !IsVertical;
@@ -20,7 +21,7 @@ namespace CG1.Shapes
             Color = isVertical ? Color.DarkOrange : Color.LightPink;
         }
 
-        public MyVerticalLine(MyLine line, bool isVertical) : base(line.First, line.Second, line.Color)
+        public MyVerticalLine(MyLine line, bool isVertical) : base(line.First, line.Second, line.Color, line.ParentPolygon)
         {
             IsVertical = isVertical;
             IsHorizontal = !IsVertical;
@@ -64,6 +65,23 @@ namespace CG1.Shapes
                 return true;
             }
             return false;
+        }
+
+        public override void ChangeMenuWhileCreating(MyLine LeftLine, MyLine RightLine)
+        {
+            
+            LineMenu leftMenu = (LineMenu)LeftLine.Menu;
+            LineMenu rightMenu = (LineMenu)RightLine.Menu;
+            if (IsHorizontal)
+            {
+                leftMenu.Items[3].Enabled = false;
+                rightMenu.Items[3].Enabled = false;
+            }
+            else
+            {
+                leftMenu.Items[2].Enabled = false;
+                rightMenu.Items[2].Enabled = false;
+            }
         }
     }
 }

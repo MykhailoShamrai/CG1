@@ -1,16 +1,17 @@
 using CG1.ContextMenus;
 using CG1.Drawers;
 using CG1.Shapes;
+using System.Diagnostics.Eventing.Reader;
 using System.Windows.Forms.VisualStyles;
 
 namespace CG1
 {
     public partial class Form1 : Form
     {
-        private MyPoint[] tmpPoint = [new MyPoint(new Point(0, 0), 4), new MyPoint(new Point(0, 0), 4)];
+        private MyPoint[] tmpPoint;
         private Point _startPointForDrag = new Point(0, 0);
         public Bitmap Bitmap { get; set; }
-        internal MyPolygon Polygon { get; set; } = new MyPolygon();
+        internal MyPolygon Polygon { get; set; }
         internal IDrawer Drawer { get; set; }
 
         public Form1()
@@ -20,57 +21,19 @@ namespace CG1
             ClearBitmap(Bitmap);
             pictureBoxMain.Image = Bitmap;
             Drawer = new LibraryDrawer();
-            MyLine.Menu.Items[0].Click += AddVertex_Click;
-            MyPoint.Menu.Items[0].Click += DeleteVertex_Click;
-            MyLine.Menu.Items[1].Click += LenLock_Click;
-            MyLine.Menu.Items[2].Click += VertLock_Click;
-            MyLine.Menu.Items[3].Click += HorizontalLock_Click;
+            Polygon = new MyPolygon(this);
+            tmpPoint = [new MyPoint(new Point(0, 0), 4, Polygon), new MyPoint(new Point(0, 0), 4, Polygon)];
+            //MyLine.Menu.Items[0].Click += AddVertex_Click;
+            //MyPoint.Menu.Items[0].Click += DeleteVertex_Click;
+            //MyLine.Menu.Items[1].Click += LenLock_Click;
+            //MyLine.Menu.Items[2].Click += VertLock_Click;
+            //MyLine.Menu.Items[3].Click += HorizontalLock_Click;
         }
 
-        private void HorizontalLock_Click(object? sender, EventArgs e)
-        {
-            Polygon.ChangeEdgeType(false);
-            ClearBitmap(Bitmap);
-            Polygon.DrawPolygon(Bitmap);
-            pictureBoxMain.Refresh();
-        }
-
-        private void VertLock_Click(object? sender, EventArgs e)
-        {
-            Polygon.ChangeEdgeType(true);
-            ClearBitmap(Bitmap);
-            Polygon.DrawPolygon(Bitmap);
-            pictureBoxMain.Refresh();
-        }
-
-        private void LenLock_Click(object? sender, EventArgs e)
-        {
-
-            Polygon.ChangeEdgeType(100);
 
 
-            ClearBitmap(Bitmap);
-            Polygon.DrawPolygon(Bitmap);
-            pictureBoxMain.Refresh();
-        }
 
-        private void DeleteVertex_Click(object? sender, EventArgs e)
-        {
-            Polygon.DeleteChosenPoint();
-            ClearBitmap(Bitmap);
-            Polygon.DrawPolygon(Bitmap);
-            pictureBoxMain.Refresh();
-        }
-
-        private void AddVertex_Click(object? sender, EventArgs e)
-        {
-            Polygon.AddPointInsideChosenEdge();
-            ClearBitmap(Bitmap);
-            Polygon.DrawPolygon(Bitmap);
-            pictureBoxMain.Refresh();
-        }
-
-        private static void ClearBitmap(Bitmap bitmap)
+        public static void ClearBitmap(Bitmap bitmap)
         {
             using (Graphics g = Graphics.FromImage(bitmap))
             {
@@ -116,6 +79,7 @@ namespace CG1
                     }
                     else
                     {
+                        // May be I should assign event handlers here
                         IElement chosen = Polygon.CheckIfClickedInSomething(me.Location);
                         if (chosen != null)
                         {
@@ -126,10 +90,15 @@ namespace CG1
                 default:
                     break;
             }
+            ClearBitmap(Bitmap);
             Polygon.DrawPolygon(Bitmap);
             pictureBoxMain.Refresh();
         }
 
+        private void Form1_Click(object? sender, EventArgs e)
+        {
+            throw new NotImplementedException();
+        }
 
         private void pictureBoxMain_MouseDown(object sender, MouseEventArgs me)
         {
