@@ -24,6 +24,15 @@ namespace CG1
             MyPoint.Menu.Items[0].Click += DeleteVertex_Click;
             MyLine.Menu.Items[1].Click += LenLock_Click;
             MyLine.Menu.Items[2].Click += VertLock_Click;
+            MyLine.Menu.Items[3].Click += HorizontalLock_Click;
+        }
+
+        private void HorizontalLock_Click(object? sender, EventArgs e)
+        {
+            Polygon.ChangeEdgeType(false);
+            ClearBitmap(Bitmap);
+            Polygon.DrawPolygon(Bitmap);
+            pictureBoxMain.Refresh();
         }
 
         private void VertLock_Click(object? sender, EventArgs e)

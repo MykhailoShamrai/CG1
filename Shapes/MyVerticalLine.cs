@@ -11,9 +11,11 @@ namespace CG1.Shapes
     public class MyVerticalLine : MyLine
     {
         public bool IsVertical { get; set; }
+        public bool IsHorizontal { get; set; }
         public MyVerticalLine(MyPoint first, MyPoint second, Color color, bool isVertical) : base(first, second, color)
         {
             IsVertical = isVertical;
+            IsHorizontal = !IsVertical;
             MakeTwoPointsOnSameAxisLine();
             Color = isVertical ? Color.DarkOrange : Color.LightPink;
         }
@@ -21,6 +23,7 @@ namespace CG1.Shapes
         public MyVerticalLine(MyLine line, bool isVertical) : base(line.First, line.Second, line.Color)
         {
             IsVertical = isVertical;
+            IsHorizontal = !IsVertical;
             MakeTwoPointsOnSameAxisLine();
             Color = isVertical ? Color.DarkOrange : Color.LightPink;
         }
@@ -42,8 +45,6 @@ namespace CG1.Shapes
 
         public override bool ModifyForConstraints(bool direction, MyPoint startVertex)
         {
-            
-
             MyPoint pointToMove = direction ? this.Second : this.First;
             MyPoint pointThatWasMoved = direction ? this.First : this.Second;
 
@@ -57,7 +58,7 @@ namespace CG1.Shapes
             pointToMove.Center = IsVertical ? new Point(pointThatWasMoved.Center.X, pointToMove.Center.Y) : 
                 new Point(pointToMove.Center.X, pointThatWasMoved.Center.Y);
 
-
+            // If any changes for second vertex were made
             if (Math.Abs(d) > 0)
             {
                 return true;

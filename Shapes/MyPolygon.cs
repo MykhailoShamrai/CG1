@@ -352,7 +352,7 @@ namespace CG1.Shapes
             int index = Lines.IndexOf((MyLine)_chosenElement);
             MyLine tmpLine = Lines[index];
             Lines[index] = new MyLenghtLine(tmpLine, length);
-            //_chosenElement = Lines[index].First;
+            _chosenElement = Lines[index].First;
             TypeOfChosen = ChosenType.Vertex;
             DragVertex(Lines[index].First.Center);
             DragVertex(Lines[index].Second.Center);
@@ -362,17 +362,14 @@ namespace CG1.Shapes
         // true means vertical, false means horizontal
         public void ChangeEdgeType(bool vertOrHorizontal)
         {
-            if (vertOrHorizontal)
-            {
-                int index = Lines.IndexOf((MyLine)_chosenElement);
-                MyLine tmpLine = Lines[index];
-                Lines[index] = new MyVerticalLine(tmpLine, true);
-                //_chosenElement = Lines[index].First;
-                TypeOfChosen = ChosenType.Vertex;
-                DragVertex(Lines[index].First.Center);
-                DragVertex(Lines[index].Second.Center);
-                _chosenElement = null;
-            }
+            int index = Lines.IndexOf((MyLine)_chosenElement);
+            MyLine tmpLine = Lines[index];
+            Lines[index] = vertOrHorizontal ? new MyVerticalLine(tmpLine, true) : new MyVerticalLine(tmpLine, false);
+            _chosenElement = Lines[index].First;
+            TypeOfChosen = ChosenType.Vertex;
+            DragVertex(Lines[index].First.Center);
+            DragVertex(Lines[index].Second.Center);
+            _chosenElement = null;
         }
     }
 }
