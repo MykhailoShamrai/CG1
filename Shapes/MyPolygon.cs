@@ -15,6 +15,7 @@ namespace CG1.Shapes
     public class MyPolygon
     {
         private Form1 _form1;
+        private FormForLen _formForLen = new FormForLen();
         public bool Dragging { get; set; }
         public int VertexRadius { get; set; }
         public bool Valid { get; set; } = false;
@@ -105,27 +106,32 @@ namespace CG1.Shapes
             if (_chosenElement != null)
             {
                 MyPoint point = (MyPoint)_chosenElement;
-                //LinkedListNode<MyPoint> nodeRef = Points.Find(point)!;
                 if (Points[0].Equals(point))
                 {
                     Points.RemoveAt(0);
                     Lines.RemoveAt(0);
-                    Lines[^1].ChangeSecondEnd(Points[0]);
+                    //Lines.RemoveAt(Lines.Count - 1);
+                    //Lines[^1].ChangeSecondEnd(Points[0]);
+                    Lines[^1] = new MyLine(Lines[^1].First, Points[0], Color.Black, this);
                 }
                 else if (Points[^1].Equals(point))
                 {
                     Points.RemoveAt(Points.Count - 1);
                     Lines.RemoveAt(Lines.Count - 1);
-                    Lines[^1].ChangeSecondEnd(Points[0]);
+                    //Lines[^1].ChangeSecondEnd(Points[0]);
+                    Lines[^1] = new MyLine(Points[^1], Points[0], Color.Black, this);
+                    //Lines[^2] = new MyLine(Points[^2], Points[^1], Color.Black, this);
                 }
                 else
                 {
                     int index = Points.IndexOf(point);
                     MyLine lineTmp = Lines[index];
-                    MyPoint pointTmp = Points[index + 1];
-                    Lines[index - 1].ChangeSecondEnd(pointTmp);
+                    //MyPoint pointTmp = Points[index + 1];
+                    //Lines[index - 1].ChangeSecondEnd(pointTmp);
                     Lines.RemoveAt(index);
                     Points.RemoveAt(index);
+                    Lines[index - 1] = new MyLine(Points[index - 1], Points[index], Color.Black, this);
+
                 }
                 if (Points.Count < 3)
                 {
@@ -156,8 +162,8 @@ namespace CG1.Shapes
                 {
                     int index = Lines.IndexOf(line);
                     Lines.Insert(index + 1, new MyLine(tmpPoint, line.Second, Color.Black, this));
-                    line.ChangeSecondEnd(tmpPoint);
                     Points.Insert(index + 1, tmpPoint);
+                    Lines[index] = new MyLine(Lines[index].First, tmpPoint, Color.Black, this);
                 }
             }
         }
@@ -266,7 +272,7 @@ namespace CG1.Shapes
                         rightCont = Lines[indexRight].ModifyForConstraints(true, draggedVertex);
                     if (leftCont)
                         leftCont = Lines[indexLeft].ModifyForConstraints(false, draggedVertex);
-
+                
                     counter++;
                 }
             }
@@ -352,7 +358,7 @@ namespace CG1.Shapes
 
 
         // It's possible to merge this function 
-        public void ChangeEdgeType(int length)
+        public void ChangeEdgeType(double length)
         {
             int index = Lines.IndexOf((MyLine)_chosenElement);
             MyLine tmpLine = Lines[index];
@@ -404,7 +410,10 @@ namespace CG1.Shapes
         public void LenLock_Click(object? sender, EventArgs e)
         {
             // here must be a massage box to write a length
-            ChangeEdgeType(100);
+            MyLine line = (MyLine)_chosenElement;
+            _formForLen.SetToTextBox(line!.ReturnLen());
+            _formForLen.ShowDialog();
+            ChangeEdgeType(_formForLen.Len);
             Form1.ClearBitmap(_form1.Bitmap);
             DrawPolygon(_form1.Bitmap);
             _form1.Refresh();

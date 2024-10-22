@@ -59,8 +59,9 @@
             AutoScaleMode = AutoScaleMode.Font;
             ClientSize = new Size(800, 450);
             Controls.Add(pictureBoxMain);
+            DoubleBuffered = true;
             Name = "Form1";
-            Text = "Form1";
+            Text = "Polygon Editor";
             ((System.ComponentModel.ISupportInitialize)pictureBoxMain).EndInit();
             ResumeLayout(false);
         }

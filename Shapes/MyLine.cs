@@ -103,5 +103,13 @@ namespace CG1.Shapes
         {
             return;
         }
+
+        public double ReturnLen()
+        {
+            double dx = First.Center.X - Second.Center.X;
+            double dy = First.Center.Y - Second.Center.Y;
+            return Math.Sqrt(dx * dx + dy * dy);
+        }
+
     }
 }

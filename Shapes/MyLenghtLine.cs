@@ -11,7 +11,7 @@ namespace CG1.Shapes
 {
     internal class MyLenghtLine : MyLine
     {
-        public int Length {  get; set; }
+        public double Length {  get; set; }
         public MyLenghtLine(MyPoint first, MyPoint second, Color color, MyPolygon polygon) : base(first, second, color, polygon)
         {
             
@@ -27,7 +27,7 @@ namespace CG1.Shapes
             CountTwoPositionsOnSameLine();
         }
 
-        public MyLenghtLine(MyLine line, int len): base(line.First, line.Second, line.Color, line.ParentPolygon)
+        public MyLenghtLine(MyLine line, double len): base(line.First, line.Second, line.Color, line.ParentPolygon)
         {
             Length = len;
             Color = Color.MediumVioletRed;

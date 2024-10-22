@@ -23,11 +23,6 @@ namespace CG1
             Drawer = new LibraryDrawer();
             Polygon = new MyPolygon(this);
             tmpPoint = [new MyPoint(new Point(0, 0), 4, Polygon), new MyPoint(new Point(0, 0), 4, Polygon)];
-            //MyLine.Menu.Items[0].Click += AddVertex_Click;
-            //MyPoint.Menu.Items[0].Click += DeleteVertex_Click;
-            //MyLine.Menu.Items[1].Click += LenLock_Click;
-            //MyLine.Menu.Items[2].Click += VertLock_Click;
-            //MyLine.Menu.Items[3].Click += HorizontalLock_Click;
         }
 
 
@@ -42,7 +37,6 @@ namespace CG1
         }
         private void pictureBoxMain_Click(object sender, EventArgs e)
         {
-            // Here I must add evaluation if creating mode is ON
             MouseEventArgs me = (MouseEventArgs)e;
             switch (me.Button)
             {
