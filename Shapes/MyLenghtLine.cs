@@ -9,7 +9,7 @@ using System.Threading.Tasks;
 
 namespace CG1.Shapes
 {
-    internal class MyLenghtLine : MyLine
+    public class MyLenghtLine : MyLine
     {
         public double Length {  get; set; }
         public MyLenghtLine(MyPoint first, MyPoint second, Color color, MyPolygon polygon) : base(first, second, color, polygon)

@@ -32,7 +32,7 @@ namespace CG1
         {
             using (Graphics g = Graphics.FromImage(bitmap))
             {
-                g.Clear(Color.White);
+                g.Clear(Color.WhiteSmoke);
             }
         }
         private void pictureBoxMain_Click(object sender, EventArgs e)

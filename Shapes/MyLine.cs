@@ -3,6 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
+using System.Numerics;
 using System.Text;
 using System.Threading.Tasks;
 using static System.Windows.Forms.LinkLabel;
@@ -60,19 +61,37 @@ namespace CG1.Shapes
             CalcTheBoundingBox();
         }
 
+        public static (double, double) FindPerpendicular(Point first, Point last)
+        {
+            double dx = last.X - first.X;
+            double dy = last.Y - first.Y;
+            double length = Math.Sqrt(dx * dx + dy * dy);
+            double ux = dx / length;
+            double uy = dy / length;
+            double perpX = -uy;
+            double perpY = ux;
+            return (perpX, perpY);
+        }
+
+        public Point GetCenter()
+        {
+            int x_max = First.Center.X;
+            int x_min = Second.Center.X;
+            int y_max = First.Center.Y;
+            int y_min = Second.Center.Y;
+            (x_max, x_min) = x_min > x_max ? (x_min, x_max) : (x_max, x_min);
+            (y_max, y_min) = y_min > y_max ? (y_min, y_max) : (y_max, y_min);
+            Point newCoord = new Point(x_min + ((x_max - x_min) >> 1), y_min + ((y_max - y_min) >> 1));
+            return newCoord;
+        }
+
         protected void CalcTheBoundingBox()
         {
             Point firstCenter = First.Center;
             Point secondCenter = Second.Center;
-            double dx = secondCenter.X - firstCenter.X;
-            double dy = secondCenter.Y - firstCenter.Y;
-            double length = Math.Sqrt(dx * dx + dy * dy);
-            double ux = dx / length;
-            double uy = dy / length;
-            // Counting a perpendicular
-            double perpX = -uy * thicknes;
-            double perpY = ux * thicknes;
-            // Calculating the corners of the bounding box
+            (double perpX, double perpY) = FindPerpendicular(firstCenter, secondCenter);
+            perpX = perpX * thicknes;
+            perpY = perpY * thicknes;
             Point a = new Point((int)(firstCenter.X + perpX), (int)(firstCenter.Y + perpY));
             Point b = new Point((int)(firstCenter.X - perpX), (int)(firstCenter.Y - perpY));
             Point c = new Point((int)(secondCenter.X - perpX), (int)(secondCenter.Y - perpY));

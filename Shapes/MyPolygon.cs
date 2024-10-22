@@ -147,15 +147,8 @@ namespace CG1.Shapes
             if (_chosenElement != null)
             {
                 MyLine line = (MyLine)(_chosenElement!);
-                int x_max = line.First.Center.X;
-                int x_min = line.Second.Center.X;
-                int y_max = line.First.Center.Y;
-                int y_min = line.Second.Center.Y;
-                (x_max, x_min) = x_min > x_max ? (x_min, x_max) : (x_max, x_min);
-                (y_max, y_min) = y_min > y_max ? (y_min, y_max) : (y_max, y_min);
-                Point newCoord = new Point(x_min + ((x_max - x_min) >> 1), y_min + ((y_max - y_min) >> 1));
 
-
+                Point newCoord = line.GetCenter();
 
                 MyPoint tmpPoint = new MyPoint(newCoord, VertexRadius, this);
                 if (CheckIfVertexIsOnLegalPosition(tmpPoint) is null)
