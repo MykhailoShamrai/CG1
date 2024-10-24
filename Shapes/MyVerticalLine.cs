@@ -1,12 +1,5 @@
 ﻿using CG1.ContextMenus;
 using CG1.Drawers;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Runtime.CompilerServices;
-using System.Security.Cryptography;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace CG1.Shapes
 {
@@ -35,7 +28,7 @@ namespace CG1.Shapes
             int minX = First.Center.X < Second.Center.X ? First.Center.X : Second.Center.X;
             int maxX = First.Center.X < Second.Center.X ? Second.Center.X : First.Center.X;
             int minY = First.Center.Y < Second.Center.Y ? First.Center.Y : Second.Center.Y;
-            int maxY = First.Center.Y < Second.Center.Y ? Second.Center.Y: First.Center.Y;
+            int maxY = First.Center.Y < Second.Center.Y ? Second.Center.Y : First.Center.Y;
             int middleY = minY + (maxY - minY) / 2;
             int middleX = minX + (maxX - minX) / 2;
             Point newPosFirst = IsVertical ? new Point(middleX, First.Center.Y) : new Point(First.Center.X, middleY);
@@ -55,9 +48,9 @@ namespace CG1.Shapes
 
             // For point that was moved we already have changes in an object
             // dx - changes in x axis
-            int d = IsVertical ? pointThatWasMoved.Center.X - pointToMove.Center.X : 
+            int d = IsVertical ? pointThatWasMoved.Center.X - pointToMove.Center.X :
                 pointThatWasMoved.Center.Y - pointToMove.Center.Y;
-            pointToMove.Center = IsVertical ? new Point(pointThatWasMoved.Center.X, pointToMove.Center.Y) : 
+            pointToMove.Center = IsVertical ? new Point(pointThatWasMoved.Center.X, pointToMove.Center.Y) :
                 new Point(pointToMove.Center.X, pointThatWasMoved.Center.Y);
 
             // If any changes for second vertex were made
@@ -70,7 +63,7 @@ namespace CG1.Shapes
 
         public override void ChangeMenuWhileCreating(MyLine LeftLine, MyLine RightLine)
         {
-            
+
             LineMenu leftMenu = (LineMenu)LeftLine.Menu;
             LineMenu rightMenu = (LineMenu)RightLine.Menu;
             if (IsHorizontal)

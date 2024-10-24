@@ -1,11 +1,4 @@
-﻿using CG1.ContextMenus;
-using CG1.Shapes;
-using System;
-using System.Collections.Generic;
-using System.Drawing;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using CG1.Shapes;
 
 namespace CG1.Drawers
 {
@@ -19,9 +12,15 @@ namespace CG1.Drawers
         // Magick number here, important to aoid!!! I must to change this
         private Pen pen = new Pen(Color.Black, 2);
         private Pen penThick = new Pen(Color.Violet, 1);
+        private Pen dashedPen = new Pen(Color.Violet, 1);
         private Image vertImage = Image.FromFile("./PaintVertOnly.png");
         private Image horImage = Image.FromFile("./PaintHorOnly.png");
         private int distToImage = 8;
+        
+        public LibraryDrawer()
+        {
+            dashedPen.DashPattern = [2, 2];
+        }
 
         public void Draw(MyPoint point, Color color)
         {
@@ -40,7 +39,7 @@ namespace CG1.Drawers
 
         public void Draw(MyVerticalLine vertLine, Color color)
         {
-            Draw((MyLine)vertLine, color);   
+            Draw((MyLine)vertLine, color);
             (double perpX, double perpY) = MyLine.FindPerpendicular(vertLine.First.Center, vertLine.Second.Center);
             Point newCenter = vertLine.GetCenter();
             newCenter.X = newCenter.X - (int)(perpX * distToImage);
@@ -57,6 +56,17 @@ namespace CG1.Drawers
             newCenter.X = newCenter.X - (int)(perpX * distToImage);
             newCenter.Y = newCenter.Y - (int)(perpY * distToImage);
             g.DrawString(lenStr, font, brush, newCenter);
+        }
+
+        public void Draw(MyBezier myBezier, Color color)
+        {
+            pen.Color = color;
+            g.DrawLine(dashedPen, myBezier.First.Center, myBezier.Second.Center);
+            g.DrawLine(dashedPen, myBezier.FirstControlVertex.Center, myBezier.SecondControlVertex.Center);
+            g.DrawLine(dashedPen, myBezier.First.Center, myBezier.FirstControlVertex.Center);
+            g.DrawLine(dashedPen, myBezier.SecondControlVertex.Center, myBezier.Second.Center);
+            Draw(myBezier.SecondControlVertex, Color.Blue);
+            Draw(myBezier.FirstControlVertex, Color.Blue);
         }
     }
 }

@@ -1,10 +1,4 @@
 ﻿using CG1.Shapes;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Security.Policy;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace CG1.Drawers
 {
@@ -18,5 +12,6 @@ namespace CG1.Drawers
 
         public void Draw(MyLenghtLine line, Color color);
         public void Draw(MyVerticalLine verticalLine, Color color);
+        public void Draw(MyBezier myBezier, Color color);
     }
 }

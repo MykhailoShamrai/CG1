@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace CG1.Shapes
+﻿namespace CG1.Shapes
 {
     public class Triangle
     {
@@ -38,8 +32,8 @@ namespace CG1.Shapes
             points.Sort((p1, p2) =>
             {
                 if (p1.Y != p2.Y)
-                    return p2.Y.CompareTo(p1.Y); 
-                return p1.X.CompareTo(p2.X); 
+                    return p2.Y.CompareTo(p1.Y);
+                return p1.X.CompareTo(p2.X);
             });
 
             // And now for conter clockwise

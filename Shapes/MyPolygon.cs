@@ -1,14 +1,5 @@
 ﻿using CG1.Drawers;
 using System;
-using System.Collections.Generic;
-using System.Diagnostics.Metrics;
-using System.DirectoryServices.ActiveDirectory;
-using System.Drawing;
-using System.Linq;
-using System.Security.Cryptography.Xml;
-using System.Text;
-using System.Threading.Tasks;
-using System.Windows.Forms.VisualStyles;
 
 namespace CG1.Shapes
 {
@@ -25,6 +16,7 @@ namespace CG1.Shapes
         private IDrawer _drawer = null;
         public List<MyPoint> Points { get; set; }
         public List<MyLine> Lines { get; set; }
+        public List<MyPoint> BezierPoints { get; set; }
         public enum ChosenType
         {
             None,
@@ -40,6 +32,7 @@ namespace CG1.Shapes
             _form1 = owner;
             Points = new List<MyPoint>();
             Lines = new List<MyLine>();
+            BezierPoints = new List<MyPoint>();
             VertexRadius = 6;
             SetDrawer(new LibraryDrawer());
         }
@@ -165,7 +158,10 @@ namespace CG1.Shapes
         {
             IElement? element = null;
 
-            element = CheckIfVertexIsOnLegalPosition(new MyPoint(pos, VertexRadius / 4, this));
+            // Firstly check if clicked in any bezier control vertex
+            element = CheckIfClickedInControlVertex(pos);
+            if (element is null)
+                element = CheckIfVertexIsOnLegalPosition(new MyPoint(pos, VertexRadius / 4, this));
 
             if (element is null)
             {
@@ -196,6 +192,28 @@ namespace CG1.Shapes
             return element;
         }
 
+        private MyPoint? CheckIfClickedInControlVertex(Point point)
+        {
+            MyPoint? res = null;
+            int x = point.X;
+            int y = point.Y;
+            int xx = 0;
+            int yy = 0;
+            MyPoint tmp;
+            for (int i = 0; i < BezierPoints.Count; i++)
+            {
+                tmp = BezierPoints[i];
+                xx = tmp.Center.X;
+                yy = tmp.Center.Y;
+                if (!(_chosenElement is MyPoint && BezierPoints[i].Equals((MyPoint)_chosenElement)) && Math.Abs((x - xx) * (x - xx) + (y - yy) * (y - yy)) < 4 * VertexRadius * VertexRadius)
+                {
+                    res = tmp;
+                    break;
+                }
+            }
+            return res;
+        }
+
         private MyPoint? CheckIfVertexIsOnLegalPosition(MyPoint point)
         {
             MyPoint? res = null;
@@ -218,6 +236,8 @@ namespace CG1.Shapes
             return res;
         }
 
+        
+
 
         public void UnchooseElement()
         {
@@ -238,35 +258,40 @@ namespace CG1.Shapes
             {
                 MyPoint draggedVertex = (MyPoint)_chosenElement;
                 draggedVertex.Center = vertexTmp;
-                int index = Points.IndexOf(draggedVertex);
 
-                bool leftCont = true;
-                bool rightCont = true;
 
-                int counter = 0;
-                while ((leftCont || rightCont))
+                // If dragged vertex is not a bezier control point
+                if (!BezierPoints.Contains(draggedVertex))
                 {
-                    int indexLeft = index - counter - 1 >= 0 ? index - counter - 1 : Lines.Count + index - counter - 1;
-                    int indexRight = (index + counter) % Lines.Count;
-                    if (leftCont)
-                        leftCont = Lines[indexLeft].ModifyForConstraints(false, draggedVertex);
-                    if (rightCont)
-                        rightCont = Lines[indexRight].ModifyForConstraints(true, draggedVertex);
-                    counter++;
-                }
-                leftCont = true;
-                rightCont = true;
-                counter = 0;
-                while ((leftCont || rightCont))
-                {
-                    int indexLeft = index - counter - 1 >= 0 ? index - counter - 1 : Lines.Count + index - counter - 1;
-                    int indexRight = (index + counter) % Lines.Count;
-                    if (rightCont)
-                        rightCont = Lines[indexRight].ModifyForConstraints(true, draggedVertex);
-                    if (leftCont)
-                        leftCont = Lines[indexLeft].ModifyForConstraints(false, draggedVertex);
-                
-                    counter++;
+                    int index = Points.IndexOf(draggedVertex);
+                    bool leftCont = true;
+                    bool rightCont = true;
+
+                    int counter = 0;
+                    while ((leftCont || rightCont))
+                    {
+                        int indexLeft = index - counter - 1 >= 0 ? index - counter - 1 : Lines.Count + index - counter - 1;
+                        int indexRight = (index + counter) % Lines.Count;
+                        if (leftCont)
+                            leftCont = Lines[indexLeft].ModifyForConstraints(false, draggedVertex);
+                        if (rightCont)
+                            rightCont = Lines[indexRight].ModifyForConstraints(true, draggedVertex);
+                        counter++;
+                    }
+                    leftCont = true;
+                    rightCont = true;
+                    counter = 0;
+                    while ((leftCont || rightCont))
+                    {
+                        int indexLeft = index - counter - 1 >= 0 ? index - counter - 1 : Lines.Count + index - counter - 1;
+                        int indexRight = (index + counter) % Lines.Count;
+                        if (rightCont)
+                            rightCont = Lines[indexRight].ModifyForConstraints(true, draggedVertex);
+                        if (leftCont)
+                            leftCont = Lines[indexLeft].ModifyForConstraints(false, draggedVertex);
+
+                        counter++;
+                    }
                 }
             }
         }
@@ -356,7 +381,20 @@ namespace CG1.Shapes
         {
             int index = Lines.IndexOf((MyLine)_chosenElement);
             MyLine tmpLine = Lines[index];
-            Lines[index] = new MyLenghtLine(tmpLine, length);
+            if (length > 0)
+                Lines[index] = new MyLenghtLine(tmpLine, length);
+            else if (length == 0)
+            {
+                Lines[index] = new MyBezier(tmpLine);
+            }
+            else if (length == -1)
+            {
+                Lines[index] = new MyVerticalLine(tmpLine, true);
+            }
+            else
+            {
+                Lines[index] = new MyVerticalLine(tmpLine, false);
+            }
             int indexLeft = index - 1 >= 0 ? index - 1 : Lines.Count + index - 1;
             int indexRight = (index + 1) % Lines.Count;
             Lines[index].ChangeMenuWhileCreating(Lines[indexLeft], Lines[indexRight]);
@@ -368,26 +406,26 @@ namespace CG1.Shapes
         }
 
         // true means vertical, false means horizontal
-        public void ChangeEdgeType(bool vertOrHorizontal)
-        {
-            int index = Lines.IndexOf((MyLine)_chosenElement);
-            MyLine tmpLine = Lines[index];
-            Lines[index] = vertOrHorizontal ? new MyVerticalLine(tmpLine, true) : new MyVerticalLine(tmpLine, false);
-            int indexLeft = index - 1 >= 0 ? index - 1 : Lines.Count + index - 1;
-            int indexRight = (index + 1) % Lines.Count;
-            Lines[index].ChangeMenuWhileCreating(Lines[indexLeft], Lines[indexRight]);
-            _chosenElement = Lines[index].First;
-            TypeOfChosen = ChosenType.Vertex;
-            DragVertex(Lines[index].First.Center);
-            DragVertex(Lines[index].Second.Center);
-            _chosenElement = null;
-        }
+        //public void ChangeEdgeType(bool vertOrHorizontal)
+        //{
+        //    int index = Lines.IndexOf((MyLine)_chosenElement);
+        //    MyLine tmpLine = Lines[index];
+        //    Lines[index] = vertOrHorizontal ? new MyVerticalLine(tmpLine, true) : new MyVerticalLine(tmpLine, false);
+        //    int indexLeft = index - 1 >= 0 ? index - 1 : Lines.Count + index - 1;
+        //    int indexRight = (index + 1) % Lines.Count;
+        //    Lines[index].ChangeMenuWhileCreating(Lines[indexLeft], Lines[indexRight]);
+        //    _chosenElement = Lines[index].First;
+        //    TypeOfChosen = ChosenType.Vertex;
+        //    DragVertex(Lines[index].First.Center);
+        //    DragVertex(Lines[index].Second.Center);
+        //    _chosenElement = null;
+        //}
 
 
         // It shouldn't look like that
         public void HorizontalLock_Click(object? sender, EventArgs e)
         {
-            ChangeEdgeType(false);
+            ChangeEdgeType(-2);
             Form1.ClearBitmap(_form1.Bitmap);
             DrawPolygon(_form1.Bitmap);
             _form1.Refresh();
@@ -395,7 +433,7 @@ namespace CG1.Shapes
 
         public void VertLock_Click(object? sender, EventArgs e)
         {
-            ChangeEdgeType(true);
+            ChangeEdgeType(-1);
             Form1.ClearBitmap(_form1.Bitmap);
             DrawPolygon(_form1.Bitmap);
             _form1.Refresh();
@@ -414,7 +452,7 @@ namespace CG1.Shapes
         }
 
         public void DeleteVertex_Click(object? sender, EventArgs e)
-        { 
+        {
             DeleteChosenPoint();
             Form1.ClearBitmap(_form1.Bitmap);
             DrawPolygon(_form1.Bitmap);
@@ -429,5 +467,13 @@ namespace CG1.Shapes
             _form1.Refresh();
         }
 
+
+        public void AddBezier_Click(object? sender, EventArgs e)
+        {
+            ChangeEdgeType(0);
+            Form1.ClearBitmap(_form1.Bitmap);
+            DrawPolygon(_form1.Bitmap);
+            _form1.Refresh();
+        }
     }
 }

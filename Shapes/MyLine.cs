@@ -1,18 +1,10 @@
 ﻿using CG1.ContextMenus;
 using CG1.Drawers;
-using System;
-using System.Collections.Generic;
 using System.ComponentModel;
-using System.Diagnostics.Contracts;
-using System.Linq;
-using System.Numerics;
-using System.Text;
-using System.Threading.Tasks;
-using static System.Windows.Forms.LinkLabel;
 
 namespace CG1.Shapes
 {
-    public class MyLine: IElement
+    public class MyLine : IElement
     {
         private int thicknes = 5;
         public MyPolygon ParentPolygon { get; set; }
@@ -50,6 +42,7 @@ namespace CG1.Shapes
             Menu.Items[1].Click += polygon.LenLock_Click;
             Menu.Items[2].Click += polygon.VertLock_Click;
             Menu.Items[3].Click += polygon.HorizontalLock_Click;
+            Menu.Items[4].Click += polygon.AddBezier_Click;
         }
 
 
@@ -95,7 +88,7 @@ namespace CG1.Shapes
             return newCoord;
         }
 
-        protected void CalcTheBoundingBox()
+        protected virtual void CalcTheBoundingBox()
         {
             Point firstCenter = First.Center;
             Point secondCenter = Second.Center;
@@ -107,8 +100,8 @@ namespace CG1.Shapes
             Point c = new Point((int)(secondCenter.X - perpX), (int)(secondCenter.Y - perpY));
             Point d = new Point((int)(secondCenter.X + perpX), (int)(secondCenter.Y + perpY));
 
-            BoundingBox[0].ChangeVertices(a, b, c);  
-            BoundingBox[1].ChangeVertices(c, d, a);  
+            BoundingBox[0].ChangeVertices(a, b, c);
+            BoundingBox[1].ChangeVertices(c, d, a);
         }
 
         protected virtual void OnPointChanged(object sender, PropertyChangedEventArgs e)

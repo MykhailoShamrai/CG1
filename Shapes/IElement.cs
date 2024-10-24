@@ -1,10 +1,4 @@
 ﻿using CG1.Drawers;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Security.Policy;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace CG1.Shapes
 {
@@ -28,7 +22,7 @@ namespace CG1.Shapes
                 point.X >= Math.Min(x.X, y.X) &&
                 point.Y <= Math.Max(x.Y, y.Y) &&
                 point.Y >= Math.Min(x.Y, y.Y));
-            
+
         }
 
         // 0 - Intersect

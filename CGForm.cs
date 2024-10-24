@@ -1,8 +1,5 @@
-using CG1.ContextMenus;
 using CG1.Drawers;
 using CG1.Shapes;
-using System.Diagnostics.Eventing.Reader;
-using System.Windows.Forms.VisualStyles;
 
 namespace CG1
 {

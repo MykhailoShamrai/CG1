@@ -1,30 +1,27 @@
 ﻿using CG1.ContextMenus;
 using CG1.Drawers;
-using System;
-using System.Collections.Generic;
 using System.ComponentModel;
-using System.Linq;
-using System.Net.Http.Headers;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace CG1.Shapes
 {
-    public class MyPoint: IElement
+    public class MyPoint : IElement
     {
         private Point _center;
         public MyPolygon ParentPolygon { get; set; }
-        public Point Center { get => _center; set 
+        public Point Center
+        {
+            get => _center; set
             {
                 if (_center.X != value.X || _center.Y != value.Y)
                 {
                     _center = value;
                     OnPropertyChanged(nameof(Center));
                 }
-            }}
+            }
+        }
         public int Radius { get; set; }
 
-        
+
         public ContextMenuStrip Menu { get; set; } = new PointMenu();
 
         public Color Color { get; set; }

@@ -1,21 +1,13 @@
 ﻿using CG1.Drawers;
-using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Linq;
-using System.Security.Cryptography.Xml;
-using System.Security.Policy;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace CG1.Shapes
 {
     public class MyLenghtLine : MyLine
     {
-        public double Length {  get; set; }
+        public double Length { get; set; }
         public MyLenghtLine(MyPoint first, MyPoint second, Color color, MyPolygon polygon) : base(first, second, color, polygon)
         {
-            
+
             Length = 0;
             Color = Color.MediumVioletRed;
             CountTwoPositionsOnSameLine();
@@ -28,7 +20,7 @@ namespace CG1.Shapes
             CountTwoPositionsOnSameLine();
         }
 
-        public MyLenghtLine(MyLine line, double len): base(line.First, line.Second, line.Color, line.ParentPolygon)
+        public MyLenghtLine(MyLine line, double len) : base(line.First, line.Second, line.Color, line.ParentPolygon)
         {
             Length = len;
             Color = Color.MediumVioletRed;
@@ -56,7 +48,7 @@ namespace CG1.Shapes
         {
             MyPoint pointToMove = direction ? this.Second : this.First;
             MyPoint pointThatWasMoved = direction ? this.First : this.Second;
-            if (pointToMove.Equals(startVertex)) 
+            if (pointToMove.Equals(startVertex))
                 return false;
             // Compute the current vector between the moved point and the point to move
             int dx = pointToMove.Center.X - pointThatWasMoved.Center.X;
