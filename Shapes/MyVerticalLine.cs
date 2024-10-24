@@ -1,4 +1,5 @@
 ﻿using CG1.ContextMenus;
+using CG1.Drawers;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -82,6 +83,11 @@ namespace CG1.Shapes
                 leftMenu.Items[2].Enabled = false;
                 rightMenu.Items[2].Enabled = false;
             }
+        }
+
+        public override void VisitDrawer(IDrawer drawer)
+        {
+            drawer.Draw(this, this.Color);
         }
     }
 }

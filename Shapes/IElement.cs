@@ -1,6 +1,8 @@
-﻿using System;
+﻿using CG1.Drawers;
+using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Security.Policy;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -8,6 +10,7 @@ namespace CG1.Shapes
 {
     public interface IElement
     {
+        public void VisitDrawer(IDrawer drawer);
         public ContextMenuStrip GetMenu();
         public abstract ContextMenuStrip Menu { get; set; }
         public Color Color { get; set; }

@@ -283,19 +283,20 @@ namespace CG1.Shapes
         public void DrawPolygon(Bitmap bitmap)
         {
             foreach (MyPoint point in Points)
-                _drawer.Draw(point, point.Color, bitmap);
+                point.VisitDrawer(_drawer);
             foreach (MyLine line in Lines)
-                _drawer.Draw(line, line.Color, bitmap);
+                line.VisitDrawer(_drawer);
         }
 
         public void DrawPolygon(Bitmap bitmap, MyPoint lastPoint, MyPoint tmp)
         {
             DrawPolygon(bitmap);
             // I must find better soluton, because creating a new line for each time is memory consuming
-            _drawer.Draw(tmp, Color.Green, bitmap);
+            tmp.VisitDrawer(_drawer);
             if (lastPoint != null)
             {
-                _drawer.Draw(new MyLine(lastPoint, tmp, Color.Green, this), Color.Green, bitmap);
+                MyLine tmpLine = new MyLine(lastPoint, tmp, Color.Green, this);
+                tmpLine.VisitDrawer(_drawer);
             }
         }
         public bool AddPoint(Point point)

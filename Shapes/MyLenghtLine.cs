@@ -1,4 +1,5 @@
-﻿using System;
+﻿using CG1.Drawers;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
@@ -73,6 +74,11 @@ namespace CG1.Shapes
             pointToMove.Center = newPosition;
 
             return true;
+        }
+
+        public override void VisitDrawer(IDrawer drawer)
+        {
+            drawer.Draw(this, this.Color);
         }
     }
 }

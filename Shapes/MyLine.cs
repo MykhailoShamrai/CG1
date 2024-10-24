@@ -1,7 +1,9 @@
 ﻿using CG1.ContextMenus;
+using CG1.Drawers;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.Diagnostics.Contracts;
 using System.Linq;
 using System.Numerics;
 using System.Text;
@@ -22,6 +24,12 @@ namespace CG1.Shapes
         {
             return Menu;
         }
+
+        public virtual void VisitDrawer(IDrawer drawer)
+        {
+            drawer.Draw(this, this.Color);
+        }
+
 
         public Color Color { get; set; }
 
@@ -66,6 +74,8 @@ namespace CG1.Shapes
             double dx = last.X - first.X;
             double dy = last.Y - first.Y;
             double length = Math.Sqrt(dx * dx + dy * dy);
+            if (length < 10e-6)
+                length = 10e-6;
             double ux = dx / length;
             double uy = dy / length;
             double perpX = -uy;

@@ -1,4 +1,5 @@
 ﻿using CG1.ContextMenus;
+using CG1.Drawers;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -23,6 +24,7 @@ namespace CG1.Shapes
             }}
         public int Radius { get; set; }
 
+        
         public ContextMenuStrip Menu { get; set; } = new PointMenu();
 
         public Color Color { get; set; }
@@ -37,6 +39,11 @@ namespace CG1.Shapes
         public ContextMenuStrip GetMenu()
         {
             return Menu;
+        }
+
+        public void VisitDrawer(IDrawer drawer)
+        {
+            drawer.Draw(this, this.Color);
         }
 
         public MyPoint(Point center, int radius, MyPolygon polygon)

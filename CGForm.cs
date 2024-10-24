@@ -21,7 +21,9 @@ namespace CG1
             ClearBitmap(Bitmap);
             pictureBoxMain.Image = Bitmap;
             Drawer = new LibraryDrawer();
+            Drawer.canvas = Bitmap;
             Polygon = new MyPolygon(this);
+            Polygon.SetDrawer(Drawer);
             tmpPoint = [new MyPoint(new Point(0, 0), 4, Polygon), new MyPoint(new Point(0, 0), 4, Polygon)];
         }
 
