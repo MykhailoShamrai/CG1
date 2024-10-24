@@ -1,17 +1,30 @@
 ﻿using CG1.Drawers;
 using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.DirectoryServices.ActiveDirectory;
 using System.Linq;
+using System.Net.Http.Headers;
+using System.Numerics;
 using System.Runtime.InteropServices;
 using System.Text;
 using System.Threading.Tasks;
+using System.Windows.Forms.VisualStyles;
 
 namespace CG1.Shapes
 {
     public class MyBezier : MyLine
     {
         private int _startDist = 30;
+        public double Shift { get; set; }
+        private Vector2 _A = new();
+        private Vector2 _B = new();
+        private Vector2 _C = new();
+        private Vector2 _D = new();
+        public Vector2 A { get { return _A; } }
+        public Vector2 B { get { return _B; } }
+        public Vector2 C { get { return _C; } }
+        public Vector2 D { get { return _D; } }
         public MyPoint FirstControlVertex { get; set; }
         public MyPoint SecondControlVertex { get; set; }
         public MyBezier(MyPoint first, MyPoint second, Color color, MyPolygon polygon) : base(first, second, color, polygon)
@@ -28,7 +41,7 @@ namespace CG1.Shapes
 
             FirstControlVertex = new MyPoint(centerFirst, first.Radius, polygon);
             SecondControlVertex = new MyPoint(centerSecond, second.Radius, polygon);
-            CalcTheBoundingBox();
+            OnPointChanged(this, new PropertyChangedEventArgs(""));
         }
 
         public MyBezier(MyLine myLine) : base(myLine.First, myLine.Second, myLine.Color, myLine.ParentPolygon)
@@ -68,11 +81,31 @@ namespace CG1.Shapes
 
                 BoundingBox[0].ChangeVertices(a, b, c);
                 BoundingBox[1].ChangeVertices(c, d, a);
+                // I want to count every length and according to that apply how many parts my curve will have
+                double len = 0;
+                MyLine tmp = new MyLine(FirstControlVertex, SecondControlVertex, Color.Black, ParentPolygon);
+                //len += tmp.ReturnLen();
+                //tmp = this;
+                //len += tmp.ReturnLen();
+                //tmp.First = First;
+                //tmp.Second = FirstControlVertex;
+                //len += tmp.ReturnLen();
+                //tmp.First = SecondControlVertex;
+                //tmp.Second = Second;
+                //len += tmp.ReturnLen();
+                double numOfParts = 200;
+                Shift = 1 / numOfParts;
+                _A.X = First.Center.X;
+                _A.Y = First.Center.Y;
+                _B.X = 3 * FirstControlVertex.Center.X - 3 * First.Center.X;
+                _B.Y = 3 * FirstControlVertex.Center.Y - 3 * First.Center.Y;
+                _C.X = 3 * SecondControlVertex.Center.X - 6 * FirstControlVertex.Center.X + 3 * First.Center.X;
+                _C.Y = 3 * SecondControlVertex.Center.Y - 6 * FirstControlVertex.Center.Y + 3 * First.Center.Y;
+                _D.X = Second.Center.X - 3 * SecondControlVertex.Center.X + 3 * FirstControlVertex.Center.X - First.Center.X;
+                _D.Y = Second.Center.Y - 3 * SecondControlVertex.Center.Y + 3 * FirstControlVertex.Center.Y - First.Center.Y;
             }
             else
                 base.CalcTheBoundingBox();
         }
-
-
     }
 }
