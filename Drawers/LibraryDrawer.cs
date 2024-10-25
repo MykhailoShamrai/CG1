@@ -40,6 +40,7 @@ namespace CG1.Drawers
 
         public void Draw(MyVerticalLine vertLine, Color color)
         {
+            g = Graphics.FromImage(canvas);
             Draw((MyLine)vertLine, color);
             (double perpX, double perpY) = MyLine.FindPerpendicular(vertLine.First.Center, vertLine.Second.Center);
             Point newCenter = vertLine.GetCenter();
@@ -50,6 +51,7 @@ namespace CG1.Drawers
 
         public void Draw(MyLenghtLine lenghtLine, Color color)
         {
+            g = Graphics.FromImage(canvas);
             Draw((MyLine)lenghtLine, color);
             string lenStr = lenghtLine.Length.ToString("F2");
             (double perpX, double perpY) = MyLine.FindPerpendicular(lenghtLine.First.Center, lenghtLine.Second.Center);
@@ -61,13 +63,14 @@ namespace CG1.Drawers
 
         public void Draw(MyBezier myBezier, Color color)
         {
+            g = Graphics.FromImage(canvas);
             pen.Color = color;
             g.DrawLine(dashedPen, myBezier.First.Center, myBezier.Second.Center);
             g.DrawLine(dashedPen, myBezier.FirstControlVertex.Center, myBezier.SecondControlVertex.Center);
             g.DrawLine(dashedPen, myBezier.First.Center, myBezier.FirstControlVertex.Center);
             g.DrawLine(dashedPen, myBezier.SecondControlVertex.Center, myBezier.Second.Center);
-            Draw(myBezier.SecondControlVertex, Color.Blue);
-            Draw(myBezier.FirstControlVertex, Color.Blue);
+            g.DrawLine(dashedPen, myBezier.First.Center, myBezier.SecondControlVertex.Center);
+            g.DrawLine(dashedPen, myBezier.FirstControlVertex.Center, myBezier.Second.Center);
 
             // Drawing all lines
             double t = myBezier.Shift;

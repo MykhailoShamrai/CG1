@@ -7,6 +7,7 @@ using System.Linq;
 using System.Net.Http.Headers;
 using System.Numerics;
 using System.Runtime.InteropServices;
+using System.Security.Policy;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms.VisualStyles;
@@ -27,6 +28,9 @@ namespace CG1.Shapes
         public Vector2 D { get { return _D; } }
         public MyPoint FirstControlVertex { get; set; }
         public MyPoint SecondControlVertex { get; set; }
+
+        public MyPoint LeftPrev { get; set; }
+        public MyPoint RightNext { get; set; }
         public MyBezier(MyPoint first, MyPoint second, Color color, MyPolygon polygon) : base(first, second, color, polygon)
         {
             (double ux, double uy) = FindPerpendicular(this.First.Center, this.Second.Center);
@@ -44,8 +48,10 @@ namespace CG1.Shapes
             OnPointChanged(this, new PropertyChangedEventArgs(""));
         }
 
-        public MyBezier(MyLine myLine) : base(myLine.First, myLine.Second, myLine.Color, myLine.ParentPolygon)
+        public MyBezier(MyLine myLine, MyPoint leftPrev, MyPoint rightNext) : base(myLine.First, myLine.Second, myLine.Color, myLine.ParentPolygon)
         {
+            LeftPrev = leftPrev;
+            RightNext = rightNext;
             (double ux, double uy) = FindPerpendicular(this.First.Center, this.Second.Center);
             double len = ReturnLen();
             double dx = First.Center.X - Second.Center.X;
@@ -107,5 +113,26 @@ namespace CG1.Shapes
             else
                 base.CalcTheBoundingBox();
         }
+
+        public override bool ModifyForBezier(bool direction, MyPoint startVertex)
+        {
+            // I think, that move after bezier isn't necessary
+            BezierVertex pointThatWasMoved = direction ? (BezierVertex)this.First : (BezierVertex)this.Second;
+            MyPoint pointToMove = direction ? this.FirstControlVertex : this.SecondControlVertex;
+            MyPoint thirdPoint = direction ? this.LeftPrev : this.RightNext;
+            double dx = pointThatWasMoved.Center.X - thirdPoint.Center.X;
+            double dy = pointThatWasMoved.Center.Y - thirdPoint.Center.Y;
+            double len = Math.Sqrt(dx * dx + dy * dy);
+            double ux = dx / len;
+            double uy = dy / len;
+            double newLen = 0;
+            if (pointThatWasMoved.VertexState == BezierVertex.State.G1)
+            {
+                newLen = len;
+                pointToMove.Center = new Point((int)(pointThatWasMoved.Center.X + dx), (int)(pointThatWasMoved.Center.Y + dy));
+            }
+            return false;
+        }
+
     }
 }

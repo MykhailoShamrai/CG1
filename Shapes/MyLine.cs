@@ -121,6 +121,11 @@ namespace CG1.Shapes
             return false;
         }
 
+        public virtual bool ModifyForBezier(bool direction, MyPoint startVertex)
+        {
+            return true;
+        }
+
         public virtual void ChangeMenuWhileCreating(MyLine LeftLine, MyLine RightLine)
         {
             return;

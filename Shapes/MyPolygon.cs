@@ -266,22 +266,30 @@ namespace CG1.Shapes
                     int index = Points.IndexOf(draggedVertex);
                     bool leftCont = true;
                     bool rightCont = true;
+                    bool leftBez = true;
+                    bool rightBez = true;
 
                     int counter = 0;
-                    while ((leftCont || rightCont))
+                    while (counter < Lines.Count)
                     {
                         int indexLeft = index - counter - 1 >= 0 ? index - counter - 1 : Lines.Count + index - counter - 1;
                         int indexRight = (index + counter) % Lines.Count;
                         if (leftCont)
                             leftCont = Lines[indexLeft].ModifyForConstraints(false, draggedVertex);
+                        if (leftBez)
+                            leftBez = Lines[indexLeft].ModifyForBezier(false, draggedVertex);
                         if (rightCont)
                             rightCont = Lines[indexRight].ModifyForConstraints(true, draggedVertex);
+                        if (rightBez)
+                            rightBez = Lines[indexRight]. ModifyForBezier(true, draggedVertex);
                         counter++;
                     }
                     leftCont = true;
                     rightCont = true;
+                    leftBez = true;
+                    rightBez = true;
                     counter = 0;
-                    while ((leftCont || rightCont))
+                    while (counter < Lines.Count)
                     {
                         int indexLeft = index - counter - 1 >= 0 ? index - counter - 1 : Lines.Count + index - counter - 1;
                         int indexRight = (index + counter) % Lines.Count;
@@ -289,6 +297,11 @@ namespace CG1.Shapes
                             rightCont = Lines[indexRight].ModifyForConstraints(true, draggedVertex);
                         if (leftCont)
                             leftCont = Lines[indexLeft].ModifyForConstraints(false, draggedVertex);
+                        if (leftBez)
+                            leftBez = Lines[indexLeft].ModifyForBezier(false, draggedVertex);
+                        if (rightCont)
+                            rightCont = Lines[indexRight].ModifyForBezier(true, draggedVertex);
+                        
 
                         counter++;
                     }
@@ -311,6 +324,8 @@ namespace CG1.Shapes
                 point.VisitDrawer(_drawer);
             foreach (MyLine line in Lines)
                 line.VisitDrawer(_drawer);
+            foreach (MyPoint point in BezierPoints)
+                point.VisitDrawer(_drawer);
         }
 
         public void DrawPolygon(Bitmap bitmap, MyPoint lastPoint, MyPoint tmp)
@@ -385,7 +400,18 @@ namespace CG1.Shapes
                 Lines[index] = new MyLenghtLine(tmpLine, length);
             else if (length == 0)
             {
-                Lines[index] = new MyBezier(tmpLine);
+                int leftInd = index - 1 >= 0 ? index - 1 : Lines.Count + index - 1;
+                int rightInd = (index + 1) % Points.Count;
+                Points[rightInd] = new BezierVertex(Points[rightInd].Center,
+                    Points[rightInd].Radius, this);
+                Points[index] = new BezierVertex(Points[index].Center, Points[index].Radius, this);
+                Lines[leftInd].ChangeSecondEnd(Points[index]);
+                //Lines[leftInd].Second = Points[index];
+                Lines[rightInd].ChangeFirstEnd(Points[rightInd]);
+                //Lines[rightInd].First = Points[rightInd];
+                Lines[index].First = Points[index];
+                Lines[index].Second = Points[rightInd];
+                Lines[index] = new MyBezier(tmpLine, Lines[leftInd].First, Lines[rightInd].Second);
             }
             else if (length == -1)
             {
