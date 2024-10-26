@@ -128,10 +128,7 @@ namespace CG1
                 ClearBitmap(Bitmap);
                 int dx = me.Location.X - _startPointForDrag.X;
                 int dy = me.Location.Y - _startPointForDrag.Y;
-                foreach (MyPoint point in Polygon.Points)
-                {
-                    point.Center = new Point(point.Center.X + dx, point.Center.Y + dy);
-                }
+                Polygon.DragPolygon(dx, dy);
                 _startPointForDrag = me.Location;
                 Polygon.DrawPolygon(Bitmap);
             }

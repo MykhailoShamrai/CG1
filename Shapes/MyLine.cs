@@ -50,7 +50,7 @@ namespace CG1.Shapes
         {
             First.PropertyChanged -= OnPointChanged;
             First = point;
-            Second.PropertyChanged += OnPointChanged;
+            First.PropertyChanged += OnPointChanged;
             CalcTheBoundingBox();
         }
 
