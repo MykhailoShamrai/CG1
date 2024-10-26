@@ -140,14 +140,18 @@ namespace CG1.Shapes
                         // C1 for normal edge
                         else
                         {
-                            //int dx = this.Center.X - middleVertex.Center.X;
-                            //int dy = this.Center.Y - middleVertex.Center.Y;
-                            //NewCenter = new Point((int)(middleVertex.Center.X - 3 * dx), (int)(middleVertex.Center.Y - 3 * dy));
-                            //ParentPolygon.SelectedElement = thirdVertex;
-                            //ParentPolygon.DragVertex(NewCenter);
-                            //ParentPolygon.SelectedElement = this;
+                            int dx = this.Center.X - middleVertex.Center.X;
+                            int dy = this.Center.Y - middleVertex.Center.Y;
+                            double len = Math.Sqrt(dx * dx + dy * dy);
+                            double ux = dx / len;
+                            double uy = dy / len;
+                            double L = lineBetween.ReturnLen();
+                            NewCenter = new Point((int)(middleVertex.Center.X - L * ux), (int)(middleVertex.Center.Y - L * uy));
+                            ParentPolygon.SelectedElement = thirdVertex;
+                            ParentPolygon.DragVertex(NewCenter, !direction, direction);
+                            ParentPolygon.SelectedElement = this;
                         }
-                        break;
+
                         break;
                     default:
                         break;

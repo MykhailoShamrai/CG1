@@ -1,12 +1,14 @@
 ﻿using CG1.ContextMenus;
 using CG1.Drawers;
 using System.ComponentModel;
+using System.Diagnostics.CodeAnalysis;
 
 namespace CG1.Shapes
 {
     public class MyLine : IElement
     {
         private int thicknes = 5;
+        public double Len { get; set; }
         public MyPolygon ParentPolygon { get; set; }
         public MyPoint First { get; set; }
         public MyPoint Second { get; set; }
@@ -43,6 +45,10 @@ namespace CG1.Shapes
             Menu.Items[2].Click += polygon.VertLock_Click;
             Menu.Items[3].Click += polygon.HorizontalLock_Click;
             Menu.Items[4].Click += polygon.AddBezier_Click;
+
+            double dx = First.Center.X - Second.Center.X;
+            double dy = First.Center.Y - Second.Center.Y;
+            Len = (int)(Math.Sqrt(dx * dx + dy * dy));
         }
 
 
@@ -107,6 +113,9 @@ namespace CG1.Shapes
         protected virtual void OnPointChanged(object sender, PropertyChangedEventArgs e)
         {
             CalcTheBoundingBox();
+            //double dx = First.Center.X - Second.Center.X;
+            //double dy = First.Center.Y - Second.Center.Y;
+            //Len = (int)Math.Sqrt(dx * dx + dy * dy);
         }
 
         public bool CheckIfPointIsInsideBox(Point point)
@@ -133,9 +142,7 @@ namespace CG1.Shapes
 
         public double ReturnLen()
         {
-            double dx = First.Center.X - Second.Center.X;
-            double dy = First.Center.Y - Second.Center.Y;
-            return Math.Sqrt(dx * dx + dy * dy);
+            return Len;
         }
 
     }
