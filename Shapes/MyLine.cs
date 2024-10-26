@@ -113,9 +113,15 @@ namespace CG1.Shapes
         protected virtual void OnPointChanged(object sender, PropertyChangedEventArgs e)
         {
             CalcTheBoundingBox();
-            //double dx = First.Center.X - Second.Center.X;
-            //double dy = First.Center.Y - Second.Center.Y;
-            //Len = (int)Math.Sqrt(dx * dx + dy * dy);
+            double dx = First.Center.X - Second.Center.X;
+            double dy = First.Center.Y - Second.Center.Y;
+            // Changing the Len for an edge. I have a problem, that errors of arithmetic are accumulated
+            // and my points when I perform bezier control vertex dragging start flying away. With 
+            // this condition it performs better
+            if (Math.Abs(Len - Math.Sqrt(dx * dx + dy * dy)) > 1)
+            {
+                Len = Math.Sqrt(dx * dx + dy * dy);
+            }
         }
 
         public bool CheckIfPointIsInsideBox(Point point)
@@ -137,7 +143,6 @@ namespace CG1.Shapes
 
         public virtual void ChangeMenuWhileCreating(MyLine LeftLine, MyLine RightLine)
         {
-            return;
         }
 
         public double ReturnLen()

@@ -29,6 +29,8 @@ namespace CG1.Shapes
         public BezierControlVertex FirstControlVertex { get; set; }
         public BezierControlVertex SecondControlVertex { get; set; }
 
+        public MyLine LineFromFirstToFirstControl { get; set; }
+        public MyLine LineFromSecondControlToSecond { get; set; }
         public MyPoint LeftPrev { get; set; }
         public MyPoint RightNext { get; set; }
         public MyBezier(MyPoint first, MyPoint second, Color color, MyPolygon polygon) : base(first, second, color, polygon)
@@ -49,9 +51,9 @@ namespace CG1.Shapes
             SecondControlVertex.PropertyChanged += OnPointChanged;
             ParentPolygon.BezierPoints.Add(FirstControlVertex);
             ParentPolygon.BezierPoints.Add(SecondControlVertex);
+            LineFromFirstToFirstControl = new MyLine(First, FirstControlVertex, this.Color, this.ParentPolygon);
+            LineFromSecondControlToSecond = new MyLine(SecondControlVertex, Second, this.Color, this.ParentPolygon);
             CalcTheBoundingBox();
-            //OnPointChanged(this, new PropertyChangedEventArgs(""));
-
         }
         public MyBezier(BezierVertex first, BezierVertex second, Color color, MyPolygon polygon, MyPoint leftPrev, MyPoint rightNext) : this(first, second, color, polygon)
         {
@@ -101,15 +103,7 @@ namespace CG1.Shapes
                 // I want to count every length and according to that apply how many parts my curve will have
                 double len = 0;
                 MyLine tmp = new MyLine(FirstControlVertex, SecondControlVertex, Color.Black, ParentPolygon);
-                //len += tmp.ReturnLen();
-                //tmp = this;
-                //len += tmp.ReturnLen();
-                //tmp.First = First;
-                //tmp.Second = FirstControlVertex;
-                //len += tmp.ReturnLen();
-                //tmp.First = SecondControlVertex;
-                //tmp.Second = Second;
-                //len += tmp.ReturnLen();
+                // Change it if have enough time. It's better num of parts depends on any param
                 double numOfParts = 200;
                 Shift = 1 / numOfParts;
                 _A.X = First.Center.X;
@@ -131,10 +125,6 @@ namespace CG1.Shapes
             BezierVertex pointThatWasMoved = direction ? (BezierVertex)this.First : (BezierVertex)this.Second;
             MyPoint pointToMove = direction ? this.FirstControlVertex : this.SecondControlVertex;
             MyPoint thirdPoint = direction ? this.LeftPrev : this.RightNext;
-            double ddx = pointToMove.Center.X - pointThatWasMoved.Center.X;
-            double ddy = pointToMove.Center.Y - pointThatWasMoved.Center.Y;
-            
-            double startLenToControl = Math.Sqrt(ddx * ddx + ddy * ddy);
             double dx = pointThatWasMoved.Center.X - thirdPoint.Center.X;
             double dy = pointThatWasMoved.Center.Y - thirdPoint.Center.Y;
             double len = Math.Sqrt(dx * dx + dy * dy);
@@ -143,12 +133,22 @@ namespace CG1.Shapes
             double newLen = 0;
             if (pointThatWasMoved.VertexState == BezierVertex.State.C1)
             {
-                newLen = startLenToControl;
                 // Here must be check if the third point is from another bezier
-                
-                pointToMove.Center = new Point((int)(pointThatWasMoved.Center.X + dx / 3), (int)(pointThatWasMoved.Center.Y + dy / 3));
+                if (thirdPoint is BezierControlVertex)
+                {
+                    pointToMove.Center = new Point((int)(pointThatWasMoved.Center.X + dx), (int)(pointThatWasMoved.Center.Y + dy));
+                }
+                else
+                {
+                    pointToMove.Center = new Point((int)(pointThatWasMoved.Center.X + dx / 3), (int)(pointThatWasMoved.Center.Y + dy / 3));
+                }
             }
-            //if (poi)
+            else if (pointThatWasMoved.VertexState == BezierVertex.State.G1)
+            {
+                len = direction ? LineFromFirstToFirstControl.Len : LineFromSecondControlToSecond.Len;
+                pointToMove.Center = new Point((int)(pointThatWasMoved.Center.X + ux * len), (int)(pointThatWasMoved.Center.Y + uy * len)); 
+            }
+            
             return false;
         }
 

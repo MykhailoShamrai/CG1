@@ -4,8 +4,6 @@
     {
         public PointMenu() : base()
         {
-            ToolStripMenuItem deleteButton = new ToolStripMenuItem("Delete vertex");
-            Items.Add(deleteButton);
         }
     }
 }

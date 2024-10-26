@@ -30,15 +30,12 @@ namespace CG1.Shapes
             // I think I should do large switch case here...
             BezierVertex middleVertex = direction ? (BezierVertex)_bezier.Second : (BezierVertex)_bezier.First;
             MyPoint thirdVertex = direction ? _bezier.RightNext : _bezier.LeftPrev;
-            // 
-            //MyPoint pointToFind = direction ? _bezier.Second : _bezier.LeftPrev;
-            // Here can be control vertex from bezier !!! 
+
             int index = ParentPolygon.Points.IndexOf(middleVertex);
             index = direction ? index : (index - 1 >= 0 ? index - 1 : ParentPolygon.Lines.Count + index - 1);
-            MyLine lineBetween = null;
-            if (index != -1)
+            MyLine lineBetween = ParentPolygon.Lines[index];
+            if (!(thirdVertex is BezierControlVertex))
             {
-                lineBetween = ParentPolygon.Lines[index];
                 switch (middleVertex.VertexState)
                 {
                     case BezierVertex.State.C0:
@@ -60,7 +57,7 @@ namespace CG1.Shapes
                                 NewCenter = new Point(middleVertex.Center.X - dx * 3, this.Center.Y);
                             }
                             ParentPolygon.SelectedElement = thirdVertex;
-                            ParentPolygon.DragVertex(NewCenter);
+                            ParentPolygon.DragVertex(NewCenter, !direction, direction);
                             ParentPolygon.SelectedElement = this;
                         }
                         // C1 for lenght
@@ -78,7 +75,7 @@ namespace CG1.Shapes
                             ParentPolygon.SelectedElement = this;
                             NewCenter = new Point((int)(middleVertex.Center.X - L * ux), (int)(middleVertex.Center.Y - L * uy));
                             ParentPolygon.SelectedElement = thirdVertex;
-                            ParentPolygon.DragVertex(NewCenter);
+                            ParentPolygon.DragVertex(NewCenter, !direction, direction);
                             ParentPolygon.SelectedElement = this;
                         }
                         // C1 for normal edge
@@ -88,7 +85,7 @@ namespace CG1.Shapes
                             int dy = this.Center.Y - middleVertex.Center.Y;
                             NewCenter = new Point((int)(middleVertex.Center.X - 3 * dx), (int)(middleVertex.Center.Y - 3 * dy));
                             ParentPolygon.SelectedElement = thirdVertex;
-                            ParentPolygon.DragVertex(NewCenter);
+                            ParentPolygon.DragVertex(NewCenter, !direction, direction);
                             ParentPolygon.SelectedElement = this;
                         }
                         break;
@@ -105,7 +102,7 @@ namespace CG1.Shapes
                                     NewCenter = new Point(this.Center.X, (int)(middleVertex.Center.Y + len));
                                 else if (thirdVertex.Center.Y > middleVertex.Center.Y && Center.Y > middleVertex.Center.Y)
                                     NewCenter = new Point(this.Center.X, (int)(middleVertex.Center.Y - len));
-                                else 
+                                else
                                     NewCenter = new Point(this.Center.X, thirdVertex.Center.Y);
                             }
                             else
@@ -116,7 +113,7 @@ namespace CG1.Shapes
                                     NewCenter = new Point((int)(middleVertex.Center.X + len), Center.Y);
                                 else if (thirdVertex.Center.X > middleVertex.Center.X && Center.X > middleVertex.Center.X)
                                     NewCenter = new Point((int)(middleVertex.Center.X - len), Center.Y);
-                                else 
+                                else
                                     NewCenter = new Point(thirdVertex.Center.X, this.Center.Y);
                             }
                             ParentPolygon.SelectedElement = thirdVertex;
@@ -147,11 +144,39 @@ namespace CG1.Shapes
                             double uy = dy / len;
                             double L = lineBetween.ReturnLen();
                             NewCenter = new Point((int)(middleVertex.Center.X - L * ux), (int)(middleVertex.Center.Y - L * uy));
+                            // Something wrong here
+
                             ParentPolygon.SelectedElement = thirdVertex;
                             ParentPolygon.DragVertex(NewCenter, !direction, direction);
                             ParentPolygon.SelectedElement = this;
                         }
 
+                        break;
+                    default:
+                        break;
+                }
+            }
+            else // on the other side wi also have bezier control vertex
+            {
+                Point NewCenter = new Point();
+                switch (middleVertex.VertexState)
+                {
+                    case BezierVertex.State.C1:
+                        int dx = this.Center.X - middleVertex.Center.X;
+                        int dy = this.Center.Y - middleVertex.Center.Y;
+                        double len = Math.Sqrt(dx * dx + dy * dy);
+                        NewCenter = new Point((middleVertex.Center.X - dx), (middleVertex.Center.Y - dy));
+                        thirdVertex.Center = NewCenter;
+                        break;
+                    case BezierVertex.State.G1:
+                        dx = this.Center.X - middleVertex.Center.X;
+                        dy = this.Center.Y - middleVertex.Center.Y;
+                        len = Math.Sqrt(dx * dx + dy * dy);
+                        double ux = dx / len;
+                        double uy = dy / len;
+                        double L = direction ? ((MyBezier)(lineBetween)).LineFromSecondControlToSecond.Len : ((MyBezier)(lineBetween)).LineFromFirstToFirstControl.Len;
+                        NewCenter = new Point((int)(middleVertex.Center.X - L * ux), (int)(middleVertex.Center.Y - L * uy));
+                        thirdVertex.Center = NewCenter;
                         break;
                     default:
                         break;

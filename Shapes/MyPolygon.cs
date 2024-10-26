@@ -158,7 +158,7 @@ namespace CG1.Shapes
                 Point newCoord = line.GetCenter();
 
                 MyPoint tmpPoint = new MyPoint(newCoord, VertexRadius, this);
-                if (CheckIfVertexIsOnLegalPosition(tmpPoint) is null)
+                if (CheckIfVertexIsOnLegalPosition(tmpPoint.Center) is null)
                 {
                     int index = Lines.IndexOf(line);
                     Lines.Insert(index + 1, new MyLine(tmpPoint, line.Second, Color.Black, this));
@@ -175,7 +175,7 @@ namespace CG1.Shapes
             // Firstly check if clicked in any bezier control vertex
             element = CheckIfClickedInControlVertex(pos);
             if (element is null)
-                element = CheckIfVertexIsOnLegalPosition(new MyPoint(pos, VertexRadius / 4, this));
+                element = CheckIfVertexIsOnLegalPosition(pos);
 
             if (element is null)
             {
@@ -228,11 +228,11 @@ namespace CG1.Shapes
             return res;
         }
 
-        private MyPoint? CheckIfVertexIsOnLegalPosition(MyPoint point)
+        private MyPoint? CheckIfVertexIsOnLegalPosition(Point point)
         {
             MyPoint? res = null;
-            int x = point.Center.X;
-            int y = point.Center.Y;
+            int x = point.X;
+            int y = point.Y;
             int xx = 0;
             int yy = 0;
             MyPoint tmp;
@@ -241,7 +241,7 @@ namespace CG1.Shapes
                 tmp = Points[i];
                 xx = tmp.Center.X;
                 yy = tmp.Center.Y;
-                if (!(_chosenElement is MyPoint && Points[i].Equals((MyPoint)_chosenElement)) && Math.Abs((x - xx) * (x - xx) + (y - yy) * (y - yy)) < 4 * VertexRadius * point.Radius)
+                if (!(_chosenElement is MyPoint && Points[i].Equals((MyPoint)_chosenElement)) && Math.Abs((x - xx) * (x - xx) + (y - yy) * (y - yy)) < 4 * VertexRadius * VertexRadius)
                 {
                     res = tmp;
                     break;
@@ -268,14 +268,14 @@ namespace CG1.Shapes
         public void DragVertex(Point vertexTmp, bool left = true, bool right = true)
         {
             if (_chosenElement is not null && TypeOfChosen == ChosenType.Vertex
-                && CheckIfVertexIsOnLegalPosition(new MyPoint(vertexTmp, VertexRadius, this)) is null)
+                && CheckIfVertexIsOnLegalPosition(vertexTmp) is null)
             {
                 MyPoint draggedVertex = (MyPoint)_chosenElement;
                 draggedVertex.Center = vertexTmp;
 
 
                 // If dragged vertex is not a bezier control point
-                if (!BezierPoints.Contains(draggedVertex))
+                if (!(draggedVertex is BezierControlVertex))
                 {
                     int index = Points.IndexOf(draggedVertex);
                     bool leftCont = true;
@@ -384,7 +384,7 @@ namespace CG1.Shapes
                 else
                 {
                     // This part of code can be placed as another function, because it may be important in other part of code
-                    res = CheckIfVertexIsOnLegalPosition(curp) is null;
+                    res = CheckIfVertexIsOnLegalPosition(curp.Center) is null;
                 }
             }
             if (Points.Count == 0)
@@ -425,12 +425,7 @@ namespace CG1.Shapes
                 BezierVertex tmp1 = new BezierVertex(Points[index].Center, Points[index].Radius, this);
                 Points[index] = tmp1;
                 Lines[leftInd].ChangeSecondEnd(tmp1);
-                //Lines[leftInd].Second = Points[index];
                 Lines[rightInd].ChangeFirstEnd(tmp2);
-                
-                //Lines[rightInd].First = Points[rightInd];
-                //Lines[index].First = Points[index];
-               //Lines[index].Second = Points[rightInd];
                 Lines[index] = new MyBezier(tmp1, tmp2, Color.Black, this, Lines[leftInd].First, Lines[rightInd].Second);
                 MyBezier tmpThis = (MyBezier)Lines[index];
                 if (Lines[leftInd] is MyBezier)

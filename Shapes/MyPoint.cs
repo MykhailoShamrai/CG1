@@ -49,6 +49,8 @@ namespace CG1.Shapes
             Center = center;
             Radius = radius;
             Color = Color.Black;
+            ToolStripMenuItem deleteButton = new ToolStripMenuItem("Delete vertex");
+            Menu.Items.Add(deleteButton);
             Menu.Items[0].Click += polygon.DeleteVertex_Click;
         }
     }
