@@ -150,5 +150,15 @@ namespace CG1.Shapes
             return Len;
         }
 
+
+        public static (double, double, double) LenBetweenTwoPoints(Point first, Point second)
+        {
+            double dx = second.X - first.X;
+            double dy = second.Y - first.Y;
+            double len = Math.Sqrt(dx * dx + dy * dy);
+            if (len < 10e-6)
+                len = 10e-6;
+            return (dx, dy, len);
+        }
     }
 }

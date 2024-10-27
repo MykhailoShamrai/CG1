@@ -17,7 +17,7 @@ namespace CG1
             Bitmap = new Bitmap(_bitmapSize, _bitmapSize);
             ClearBitmap(Bitmap);
             pictureBoxMain.Image = Bitmap;
-            Drawer = new BrezenhamDrawer(Bitmap);
+            Drawer = new LibraryDrawer(Bitmap);
             
             Polygon = new MyPolygon(this);
             Polygon.SetDrawer(Drawer);

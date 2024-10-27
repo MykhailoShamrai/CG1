@@ -30,8 +30,8 @@ namespace CG1.Shapes
         public BezierControlVertex FirstControlVertex { get; set; }
         public BezierControlVertex SecondControlVertex { get; set; }
 
-        public MyLine LineFromFirstToFirstControl { get; set; }
-        public MyLine LineFromSecondControlToSecond { get; set; }
+        public double LineFromFirstToFirstControl { get; set; }
+        public double LineFromSecondControlToSecond { get; set; }
         public MyPoint LeftPrev { get; set; }
         public MyPoint RightNext { get; set; }
         public MyBezier(MyPoint first, MyPoint second, Color color, MyPolygon polygon) : base(first, second, color, polygon)
@@ -43,22 +43,39 @@ namespace CG1.Shapes
             double dxu = dx / len;
             double dyu = dy / len;
 
-            Point centerFirst = new Point((int)(First.Center.X + dxu * len / 4), (int)(First.Center.Y + dyu * len / 4));
-            Point centerSecond = new Point((int)(First.Center.X + dxu * 3 * len / 4), (int)(First.Center.Y + dyu * 3 * len / 4));
+            Point centerFirst = new Point((int)(First.Center.X - dxu * len / 4), (int)(First.Center.Y - dyu * len / 4));
+            Point centerSecond = new Point((int)(First.Center.X - dxu * 3 * len / 4), (int)(First.Center.Y - dyu * 3 * len / 4));
 
             FirstControlVertex = new BezierControlVertex(centerFirst, first.Radius, polygon, this);
             FirstControlVertex.PropertyChanged += OnPointChanged;
+            FirstControlVertex.PropertyChanged += FirstControlVertex_PropertyChanged;
             SecondControlVertex = new BezierControlVertex(centerSecond, second.Radius, polygon, this);
             SecondControlVertex.PropertyChanged += OnPointChanged;
+            SecondControlVertex.PropertyChanged += SecondControlVertex_PropertyChanged;
+            //First.PropertyChanged += FirstControlVertex_PropertyChanged;
+            //Second.PropertyChanged += SecondControlVertex_PropertyChanged;
             ParentPolygon.BezierPoints.Add(FirstControlVertex);
             ParentPolygon.BezierPoints.Add(SecondControlVertex);
-            LineFromFirstToFirstControl = new MyLine(First, FirstControlVertex, this.Color, this.ParentPolygon);
-            LineFromSecondControlToSecond = new MyLine(SecondControlVertex, Second, this.Color, this.ParentPolygon);
+
+            LineFromFirstToFirstControl = LenBetweenTwoPoints(FirstControlVertex.Center, First.Center).Item3;
+            LineFromSecondControlToSecond = LenBetweenTwoPoints(SecondControlVertex.Center, Second.Center).Item3;
             Menu.Items.Clear();
             Menu.Items.Add(new ToolStripMenuItem("Add normal"));
             Menu.Items[Menu.Items.Count - 1].Click += ParentPolygon.AddNormal_Click;
             CalcTheBoundingBox();
         }
+
+        private void FirstControlVertex_PropertyChanged(object? sender, PropertyChangedEventArgs e)
+        {
+            LineFromFirstToFirstControl  = LenBetweenTwoPoints(FirstControlVertex.Center, First.Center).Item3;
+        }
+
+        private void SecondControlVertex_PropertyChanged(object? sender, PropertyChangedEventArgs e)
+        {
+            LineFromSecondControlToSecond = LenBetweenTwoPoints(SecondControlVertex.Center, Second.Center).Item3;
+        }
+
+
         public MyBezier(BezierVertex first, BezierVertex second, Color color, MyPolygon polygon, MyPoint leftPrev, MyPoint rightNext) : this(first, second, color, polygon)
         {
             LeftPrev = leftPrev;
@@ -110,11 +127,12 @@ namespace CG1.Shapes
             BezierVertex pointThatWasMoved = direction ? (BezierVertex)this.First : (BezierVertex)this.Second;
             MyPoint pointToMove = direction ? this.FirstControlVertex : this.SecondControlVertex;
             MyPoint thirdPoint = direction ? this.LeftPrev : this.RightNext;
-            double dx = pointThatWasMoved.Center.X - thirdPoint.Center.X;
-            double dy = pointThatWasMoved.Center.Y - thirdPoint.Center.Y;
-            double len = Math.Sqrt(dx * dx + dy * dy);
-            if (len < 10e-6)
-                len = 10e-6;
+            //double dx = pointThatWasMoved.Center.X - thirdPoint.Center.X;
+            //double dy = pointThatWasMoved.Center.Y - thirdPoint.Center.Y;
+            //double len = Math.Sqrt(dx * dx + dy * dy);
+            //if (len < 10e-6)
+            //    len = 10e-6;
+            (double dx, double dy, double len) = MyLine.LenBetweenTwoPoints(thirdPoint.Center, pointThatWasMoved.Center);
             double ux = dx / len;
             double uy = dy / len;
             double newLen = 0;
@@ -133,16 +151,10 @@ namespace CG1.Shapes
             else if (pointThatWasMoved.VertexState == BezierVertex.State.G1)
             {
                 // It doesn't work
-                len = direction ? LineFromFirstToFirstControl.Len : LineFromSecondControlToSecond.Len;
+                len = direction ? LineFromFirstToFirstControl : LineFromSecondControlToSecond;
 
-                if (thirdPoint is BezierControlVertex)
-                {
-                    pointToMove.Center = new Point((int)(pointThatWasMoved.Center.X + dx), (int)(pointThatWasMoved.Center.Y + dy));
-                }
-                else
-                {
                     pointToMove.Center = new Point((int)(pointThatWasMoved.Center.X + ux * len), (int)(pointThatWasMoved.Center.Y + uy * len));
-                }
+                
             }
             
             return false;

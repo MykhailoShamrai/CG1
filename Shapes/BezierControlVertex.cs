@@ -188,7 +188,7 @@ namespace CG1.Shapes
                             len = 10e-6;
                         double ux = dx / len;
                         double uy = dy / len;
-                        double L = direction ? ((MyBezier)(lineBetween)).LineFromSecondControlToSecond.Len : ((MyBezier)(lineBetween)).LineFromFirstToFirstControl.Len;
+                        double L = direction ? ((MyBezier)(lineBetween)).LineFromSecondControlToSecond : ((MyBezier)(lineBetween)).LineFromFirstToFirstControl;
                         NewCenter = new Point((int)(middleVertex.Center.X - L * ux), (int)(middleVertex.Center.Y - L * uy));
                         thirdVertex.Center = NewCenter;
                         break;
