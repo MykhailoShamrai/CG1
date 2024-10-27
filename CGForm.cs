@@ -9,19 +9,47 @@ namespace CG1
         private Point _startPointForDrag = new Point(0, 0);
         public Bitmap Bitmap { get; set; }
         internal MyPolygon Polygon { get; set; }
-        internal IDrawer Drawer { get; set; }
-        private int _bitmapSize = 5000;
+        internal IDrawer LibDrawer { get; set; }
+        internal IDrawer BrDrawer { get; set; }
+        private int _bitmapSize = 2500;
         public Form1()
         {
             InitializeComponent();
             Bitmap = new Bitmap(_bitmapSize, _bitmapSize);
             ClearBitmap(Bitmap);
             pictureBoxMain.Image = Bitmap;
-            Drawer = new LibraryDrawer(Bitmap);
-            
+            LibDrawer = new LibraryDrawer(Bitmap);
+            BrDrawer = new BrezenhamDrawer(Bitmap);
             Polygon = new MyPolygon(this);
-            Polygon.SetDrawer(Drawer);
+            Polygon.SetDrawer(LibDrawer);
             tmpPoint = [new MyPoint(new Point(0, 0), 4, Polygon), new MyPoint(new Point(0, 0), 4, Polygon)];
+
+
+            Polygon.Points.Add(new MyPoint(new Point(321, 145), 6, Polygon));
+            Polygon.Points.Add(new MyPoint(new Point(495, 69), 6, Polygon));
+            Polygon.Points.Add(new MyPoint(new Point(704, 97), 6, Polygon));
+            Polygon.Points.Add(new MyPoint(new Point(704, 387), 6, Polygon));
+            Polygon.Points.Add(new MyPoint(new Point(324, 307), 6, Polygon));
+            Polygon.Points.Add(new MyPoint(new Point(247, 307), 6, Polygon));
+            Polygon.Lines.Add(new MyLine(Polygon.Points[0], Polygon.Points[1], Color.Black, Polygon));
+            Polygon.Lines.Add(new MyLine(Polygon.Points[1], Polygon.Points[2], Color.Black, Polygon));
+            Polygon.Lines.Add(new MyLine(Polygon.Points[2], Polygon.Points[3], Color.Black, Polygon));
+            Polygon.Lines.Add(new MyLine(Polygon.Points[3], Polygon.Points[4], Color.Black, Polygon));
+            Polygon.Lines.Add(new MyLine(Polygon.Points[4], Polygon.Points[5], Color.Black, Polygon));
+            Polygon.Lines.Add(new MyLine(Polygon.Points[5], Polygon.Points[0], Color.Black, Polygon));
+
+            Polygon.SelectedElement = Polygon.Lines[0];
+            Polygon.ChangeEdgeType(MyLine.LenBetweenTwoPoints(Polygon.Points[0].Center, Polygon.Points[1].Center).Item3);
+            Polygon.SelectedElement = Polygon.Lines[2];
+            Polygon.ChangeEdgeType(-1);
+            Polygon.SelectedElement = Polygon.Lines[3];
+            Polygon.ChangeEdgeType(0);
+            Polygon.SelectedElement = Polygon.Lines[4];
+            Polygon.ChangeEdgeType(-2);
+            Polygon.SelectedElement = null;
+            Polygon.Valid = true;
+            Polygon.DrawPolygon(Bitmap);
+            Refresh();
         }
 
 
@@ -142,6 +170,14 @@ namespace CG1
             {
                 Polygon.Dragging = false;
             }
+        }
+
+        private void BrezenheimBox_CheckedChanged(object sender, EventArgs e)
+        {
+            Polygon.SetDrawer(BrezenheimBox.Checked ? BrDrawer : LibDrawer);
+            ClearBitmap(Bitmap);
+            Polygon.DrawPolygon(Bitmap);
+            Refresh();
         }
     }
 }

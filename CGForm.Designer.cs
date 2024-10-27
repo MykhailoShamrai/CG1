@@ -31,6 +31,7 @@
             components = new System.ComponentModel.Container();
             pictureBoxMain = new PictureBox();
             contextMenuStrip1 = new ContextMenuStrip(components);
+            BrezenheimBox = new CheckBox();
             ((System.ComponentModel.ISupportInitialize)pictureBoxMain).BeginInit();
             SuspendLayout();
             // 
@@ -53,22 +54,37 @@
             contextMenuStrip1.Name = "contextMenuStrip1";
             contextMenuStrip1.Size = new Size(61, 4);
             // 
+            // BrezenheimBox
+            // 
+            BrezenheimBox.Anchor = AnchorStyles.Top | AnchorStyles.Right;
+            BrezenheimBox.AutoSize = true;
+            BrezenheimBox.Location = new Point(706, 12);
+            BrezenheimBox.Name = "BrezenheimBox";
+            BrezenheimBox.Size = new Size(105, 24);
+            BrezenheimBox.TabIndex = 2;
+            BrezenheimBox.Text = "Brezenham";
+            BrezenheimBox.UseVisualStyleBackColor = true;
+            BrezenheimBox.CheckedChanged += BrezenheimBox_CheckedChanged;
+            // 
             // Form1
             // 
             AutoScaleDimensions = new SizeF(8F, 20F);
             AutoScaleMode = AutoScaleMode.Font;
             ClientSize = new Size(887, 541);
+            Controls.Add(BrezenheimBox);
             Controls.Add(pictureBoxMain);
             DoubleBuffered = true;
             Name = "Form1";
             Text = "Polygon Editor";
             ((System.ComponentModel.ISupportInitialize)pictureBoxMain).EndInit();
             ResumeLayout(false);
+            PerformLayout();
         }
 
         #endregion
 
         private PictureBox pictureBoxMain;
         private ContextMenuStrip contextMenuStrip1;
+        private CheckBox BrezenheimBox;
     }
 }

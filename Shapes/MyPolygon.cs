@@ -55,7 +55,7 @@ namespace CG1.Shapes
         {
             // Vertical line
             Point x1 = point;
-            Point x2 = new Point(point.X, 0);
+            Point x2 = new Point(point.X, -1000);
 
             int counter = 0;
             for (int i = 0; i < Lines.Count; i++)
@@ -299,6 +299,8 @@ namespace CG1.Shapes
                 if (!(draggedVertex is BezierControlVertex))
                 {
                     int index = Points.IndexOf(draggedVertex);
+                    if (index == -1)
+                        return;
                     bool leftCont = true;
                     bool rightCont = true;
                     bool leftBez = true;

@@ -35,6 +35,11 @@ namespace CG1.Drawers
             G.DrawString(vertex.VertexState.ToString(), Font, Brush, vertex.Center);
         }
 
+        public void Draw(BezierControlVertex control, Color color)
+        {
+            Draw((MyPoint)control, Color.BlueViolet);
+        }
+
         public void Draw(MyLenghtLine lenghtLine, Color color)
         {
             Draw((MyLine)lenghtLine, color);

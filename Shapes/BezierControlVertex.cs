@@ -1,4 +1,5 @@
-﻿using System;
+﻿using CG1.Drawers;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Net.Http.Headers;
@@ -15,6 +16,7 @@ namespace CG1.Shapes
         public BezierControlVertex(Point center, int radius, MyPolygon polygon) : base(center, radius, polygon)
         {
             Menu.Items.Clear();
+            Color = Color.BlueViolet;
         }
 
         public BezierControlVertex(Point center, int radius, MyPolygon polygon, MyBezier bezier): this(center, radius, polygon)
@@ -22,7 +24,11 @@ namespace CG1.Shapes
             _bezier = bezier;
         }
 
-        
+        public override void VisitDrawer(IDrawer drawer)
+        {
+            drawer.Draw(this, Color);
+        }
+
 
         public void ModificateWhileDragging()
         {
@@ -59,7 +65,7 @@ namespace CG1.Shapes
                                 NewCenter = new Point(middleVertex.Center.X - dx * 3, this.Center.Y);
                             }
                             ParentPolygon.SelectedElement = thirdVertex;
-                            ParentPolygon.DragVertex(NewCenter, !direction, direction);
+                            ParentPolygon.DragVertex(NewCenter);
                             ParentPolygon.SelectedElement = this;
                         }
                         // C1 for lenght
