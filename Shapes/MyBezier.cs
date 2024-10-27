@@ -52,8 +52,8 @@ namespace CG1.Shapes
             SecondControlVertex = new BezierControlVertex(centerSecond, second.Radius, polygon, this);
             SecondControlVertex.PropertyChanged += OnPointChanged;
             SecondControlVertex.PropertyChanged += SecondControlVertex_PropertyChanged;
-            //First.PropertyChanged += FirstControlVertex_PropertyChanged;
-            //Second.PropertyChanged += SecondControlVertex_PropertyChanged;
+            First.PropertyChanged += FirstControlVertex_PropertyChanged;
+            Second.PropertyChanged += SecondControlVertex_PropertyChanged;
             ParentPolygon.BezierPoints.Add(FirstControlVertex);
             ParentPolygon.BezierPoints.Add(SecondControlVertex);
 
