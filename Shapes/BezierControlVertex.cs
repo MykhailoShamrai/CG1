@@ -66,11 +66,7 @@ namespace CG1.Shapes
                         else if (lineBetween is MyLenghtLine)
                         {
                             double L = ((MyLenghtLine)lineBetween).Length;
-                            int dx = this.Center.X - middleVertex.Center.X;
-                            int dy = this.Center.Y - middleVertex.Center.Y;
-                            double len = Math.Sqrt(dx * dx + dy * dy);
-                            if (len < 10e-6)
-                                len = 10e-6;
+                            (double dx, double dy, double len) = MyLine.LenBetweenTwoPoints(middleVertex.Center, Center);
                             double ux = dx / len;
                             double uy = dy / len;
                             NewCenter = new Point((int)(this.Center.X - L * ux / 3), (int)(this.Center.Y - L * uy / 3));
@@ -85,8 +81,7 @@ namespace CG1.Shapes
                         // C1 for normal edge
                         else
                         {
-                            int dx = this.Center.X - middleVertex.Center.X;
-                            int dy = this.Center.Y - middleVertex.Center.Y;
+                            (double dx, double dy, double len) = MyLine.LenBetweenTwoPoints(middleVertex.Center, Center);
                             NewCenter = new Point((int)(middleVertex.Center.X - 3 * dx), (int)(middleVertex.Center.Y - 3 * dy));
                             ParentPolygon.SelectedElement = thirdVertex;
                             ParentPolygon.DragVertex(NewCenter, !direction, direction);
@@ -100,10 +95,7 @@ namespace CG1.Shapes
                         {
                             if (((MyVerticalLine)lineBetween).IsVertical)
                             {
-                                int dy = middleVertex.Center.Y - thirdVertex.Center.Y;
-                                double len = Math.Sqrt(dy * dy);
-                                if (len < 10e-6)
-                                    len = 10e-6;
+                                (double dx, double dy, double len) = MyLine.LenBetweenTwoPoints(thirdVertex.Center, middleVertex.Center);
                                 if (thirdVertex.Center.Y < middleVertex.Center.Y && this.Center.Y < middleVertex.Center.Y)
                                     NewCenter = new Point(this.Center.X, (int)(middleVertex.Center.Y + len));
                                 else if (thirdVertex.Center.Y > middleVertex.Center.Y && Center.Y > middleVertex.Center.Y)
@@ -113,10 +105,7 @@ namespace CG1.Shapes
                             }
                             else
                             {
-                                int dx = middleVertex.Center.X - thirdVertex.Center.X;
-                                double len = Math.Sqrt(dx * dx);
-                                if (len < 10e-6)
-                                    len = 10e-6;
+                                (double dx, double dy, double len) = MyLine.LenBetweenTwoPoints(thirdVertex.Center, middleVertex.Center);
                                 if (thirdVertex.Center.X < middleVertex.Center.X && Center.X < middleVertex.Center.X)
                                     NewCenter = new Point((int)(middleVertex.Center.X + len), Center.Y);
                                 else if (thirdVertex.Center.X > middleVertex.Center.X && Center.X > middleVertex.Center.X)
@@ -132,11 +121,7 @@ namespace CG1.Shapes
                         else if (lineBetween is MyLenghtLine)
                         {
                             double L = ((MyLenghtLine)lineBetween).Length;
-                            int dx = this.Center.X - middleVertex.Center.X;
-                            int dy = this.Center.Y - middleVertex.Center.Y;
-                            double len = Math.Sqrt(dx * dx + dy * dy);
-                            if (len < 10e-6)
-                                len = 10e-6;
+                            (double dx, double dy, double len) = MyLine.LenBetweenTwoPoints(middleVertex.Center, Center);
                             double ux = dx / len;
                             double uy = dy / len;
                             NewCenter = new Point((int)(middleVertex.Center.X - L * ux), (int)(middleVertex.Center.Y - L * uy));
@@ -147,11 +132,7 @@ namespace CG1.Shapes
                         // C1 for normal edge
                         else
                         {
-                            int dx = this.Center.X - middleVertex.Center.X;
-                            int dy = this.Center.Y - middleVertex.Center.Y;
-                            double len = Math.Sqrt(dx * dx + dy * dy);
-                            if (len < 10e-6)
-                                len = 10e-6;
+                            (double dx, double dy, double len) = MyLine.LenBetweenTwoPoints(middleVertex.Center, Center);
                             double ux = dx / len;
                             double uy = dy / len;
                             double L = lineBetween.ReturnLen();
@@ -173,20 +154,12 @@ namespace CG1.Shapes
                 switch (middleVertex.VertexState)
                 {
                     case BezierVertex.State.C1:
-                        int dx = this.Center.X - middleVertex.Center.X;
-                        int dy = this.Center.Y - middleVertex.Center.Y;
-                        double len = Math.Sqrt(dx * dx + dy * dy);
-                        if (len < 10e-6)
-                            len = 10e-6;
-                        NewCenter = new Point((middleVertex.Center.X - dx), (middleVertex.Center.Y - dy));
+                        (double dx, double dy, double len) = MyLine.LenBetweenTwoPoints(middleVertex.Center, Center);
+                        NewCenter = new Point((int)(middleVertex.Center.X - dx), (int)(middleVertex.Center.Y - dy));
                         thirdVertex.Center = NewCenter;
                         break;
                     case BezierVertex.State.G1:
-                        dx = this.Center.X - middleVertex.Center.X;
-                        dy = this.Center.Y - middleVertex.Center.Y;
-                        len = Math.Sqrt(dx * dx + dy * dy);
-                        if (len < 10e-6)
-                            len = 10e-6;
+                        (dx, dy, len) = MyLine.LenBetweenTwoPoints(middleVertex.Center, Center);
                         double ux = dx / len;
                         double uy = dy / len;
                         double L = direction ? ((MyBezier)(lineBetween)).LineFromSecondControlToSecond : ((MyBezier)(lineBetween)).LineFromFirstToFirstControl;

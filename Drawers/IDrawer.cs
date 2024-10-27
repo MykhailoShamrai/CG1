@@ -23,8 +23,8 @@ namespace CG1.Drawers
 
         public void Draw(MyPoint point, Color color)
         {
-            Pen.Color = color;
-            G.DrawEllipse(Pen, point.Center.X - point.Radius, point.Center.Y - point.Radius, 2 * point.Radius, 2 * point.Radius);
+            using (Pen newPen = new Pen(color, 2))
+                G.DrawEllipse(newPen, point.Center.X - point.Radius, point.Center.Y - point.Radius, 2 * point.Radius, 2 * point.Radius);
         }
         public void Draw(MyLine line, Color color);
 
