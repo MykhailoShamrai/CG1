@@ -35,7 +35,7 @@ namespace CG1.Shapes
             Lines = new List<MyLine>();
             BezierPoints = new List<BezierControlVertex>();
             VertexRadius = 6;
-            SetDrawer(new LibraryDrawer());
+            //SetDrawer(new LibraryDrawer(Par));
         }
 
         public void DragPolygon(int dx, int dy)

@@ -43,8 +43,8 @@ namespace CG1.Shapes
             double dxu = dx / len;
             double dyu = dy / len;
 
-            Point centerFirst = new Point((int)(First.Center.X + dxu * len / 4 + ux * _startDist), (int)(First.Center.Y + dyu * len / 4 + uy * _startDist));
-            Point centerSecond = new Point((int)(First.Center.X + dxu * 3 * len / 4 - ux * _startDist), (int)(First.Center.Y + dyu * 3 * len / 4 - uy * _startDist));
+            Point centerFirst = new Point((int)(First.Center.X + dxu * len / 4), (int)(First.Center.Y + dyu * len / 4));
+            Point centerSecond = new Point((int)(First.Center.X + dxu * 3 * len / 4), (int)(First.Center.Y + dyu * 3 * len / 4));
 
             FirstControlVertex = new BezierControlVertex(centerFirst, first.Radius, polygon, this);
             FirstControlVertex.PropertyChanged += OnPointChanged;

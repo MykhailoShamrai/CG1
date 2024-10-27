@@ -10,15 +10,15 @@ namespace CG1
         public Bitmap Bitmap { get; set; }
         internal MyPolygon Polygon { get; set; }
         internal IDrawer Drawer { get; set; }
-
+        private int _bitmapSize = 5000;
         public Form1()
         {
             InitializeComponent();
-            Bitmap = new Bitmap(Screen.PrimaryScreen.Bounds.Width, Screen.PrimaryScreen.Bounds.Height);
+            Bitmap = new Bitmap(_bitmapSize, _bitmapSize);
             ClearBitmap(Bitmap);
             pictureBoxMain.Image = Bitmap;
-            Drawer = new LibraryDrawer();
-            Drawer.canvas = Bitmap;
+            Drawer = new BrezenhamDrawer(Bitmap);
+            
             Polygon = new MyPolygon(this);
             Polygon.SetDrawer(Drawer);
             tmpPoint = [new MyPoint(new Point(0, 0), 4, Polygon), new MyPoint(new Point(0, 0), 4, Polygon)];
