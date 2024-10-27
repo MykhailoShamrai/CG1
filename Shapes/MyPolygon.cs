@@ -413,12 +413,17 @@ namespace CG1.Shapes
         {
             int index = Lines.IndexOf((MyLine)_chosenElement);
             MyLine tmpLine = Lines[index];
-            if (length > 0)
-                Lines[index] = new MyLenghtLine(tmpLine, length);
-            else if (length == 0)
+            // Check if line for deleting is bezier
+            if (tmpLine is MyBezier)
             {
-                int leftInd = index - 1 >= 0 ? index - 1 : Lines.Count + index - 1;
-                int rightInd = (index + 1) % Points.Count;
+                MyBezier tmpBezier = (MyBezier)tmpLine;
+                BezierPoints.Remove(tmpBezier.FirstControlVertex);
+                BezierPoints.Remove(tmpBezier.SecondControlVertex);
+            }
+            int leftInd = index - 1 >= 0 ? index - 1 : Lines.Count + index - 1;
+            int rightInd = (index + 1) % Points.Count;
+            if (length == 0)
+            {
                 BezierVertex tmp2 = new BezierVertex(Points[rightInd].Center,
                     Points[rightInd].Radius, this);
                 Points[rightInd] = tmp2;
@@ -439,17 +444,38 @@ namespace CG1.Shapes
                     ((MyBezier)Lines[rightInd]).LeftPrev = tmpThis.SecondControlVertex;
                 }
             }
-            else if (length == -1)
-            {
-                Lines[index] = new MyVerticalLine(tmpLine, true);
-            }
             else
             {
-                Lines[index] = new MyVerticalLine(tmpLine, false);
+                // Adding length constraint
+                if (length > 0)
+                    Lines[index] = new MyLenghtLine(tmpLine, length);
+                // Adding vertical constraint
+                else if (length == -1)
+                {
+                    Lines[index] = new MyVerticalLine(tmpLine, true);
+                }
+                // Adding horizontal constraint
+                else if (length == -2)
+                {
+                    Lines[index] = new MyVerticalLine(tmpLine, false);
+                }
+                // Adding normal line
+                else
+                {
+                    Lines[index] = new MyLine(tmpLine.First, tmpLine.Second, Color.Black, this);
+                }
+                // Changing control vertices for neighbor beziers
+                if (Lines[leftInd] is MyBezier)
+                {
+                    ((MyBezier)Lines[leftInd]).RightNext = Lines[index].Second;
+                }
+                if (Lines[rightInd] is MyBezier)
+                {
+                    
+                    ((MyBezier)Lines[rightInd]).LeftPrev = Lines[index].First;
+                }
             }
-            int indexLeft = index - 1 >= 0 ? index - 1 : Lines.Count + index - 1;
-            int indexRight = (index + 1) % Lines.Count;
-            Lines[index].ChangeMenuWhileCreating(Lines[indexLeft], Lines[indexRight]);
+            //Lines[index].ChangeMenuWhileCreating(Lines[leftInd], Lines[rightInd]);
             _chosenElement = Lines[index].First;
             TypeOfChosen = ChosenType.Vertex;
             DragVertex(Lines[index].First.Center);
@@ -503,11 +529,18 @@ namespace CG1.Shapes
             _form1.Refresh();
         }
 
-
         public void AddBezier_Click(object? sender, EventArgs e)
         {
             ChangeEdgeType(0);
             Form1.ClearBitmap(_form1.Bitmap);
+            DrawPolygon(_form1.Bitmap);
+            _form1.Refresh();
+        }
+
+        public void AddNormal_Click(object? sender, EventArgs e)
+        {
+            ChangeEdgeType(-3);
+            Form1.ClearBitmap(_form1.Bitmap);   
             DrawPolygon(_form1.Bitmap);
             _form1.Refresh();
         }

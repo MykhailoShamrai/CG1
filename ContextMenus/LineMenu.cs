@@ -9,6 +9,7 @@
             ToolStripMenuItem makeVertical = new ToolStripMenuItem("Create vertical edge");
             ToolStripMenuItem makeHorizontal = new ToolStripMenuItem("Create horizontal edge");
             ToolStripMenuItem makeBezier = new ToolStripMenuItem("Create bezier");
+            
             Items.Add(addButton);
             Items.Add(lockButton);
             Items.Add(makeVertical);

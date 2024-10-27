@@ -10,6 +10,7 @@ using System.Runtime.InteropServices;
 using System.Security.Policy;
 using System.Text;
 using System.Threading.Tasks;
+using System.Windows.Forms;
 using System.Windows.Forms.VisualStyles;
 
 namespace CG1.Shapes
@@ -53,6 +54,9 @@ namespace CG1.Shapes
             ParentPolygon.BezierPoints.Add(SecondControlVertex);
             LineFromFirstToFirstControl = new MyLine(First, FirstControlVertex, this.Color, this.ParentPolygon);
             LineFromSecondControlToSecond = new MyLine(SecondControlVertex, Second, this.Color, this.ParentPolygon);
+            Menu.Items.Clear();
+            Menu.Items.Add(new ToolStripMenuItem("Add normal"));
+            Menu.Items[Menu.Items.Count - 1].Click += ParentPolygon.AddNormal_Click;
             CalcTheBoundingBox();
         }
         public MyBezier(BezierVertex first, BezierVertex second, Color color, MyPolygon polygon, MyPoint leftPrev, MyPoint rightNext) : this(first, second, color, polygon)
@@ -61,27 +65,8 @@ namespace CG1.Shapes
             RightNext = rightNext;
         }
 
-        public MyBezier(MyLine myLine, MyPoint leftPrev, MyPoint rightNext) : base(myLine.First, myLine.Second, myLine.Color, myLine.ParentPolygon)
+        public MyBezier(MyLine myLine, MyPoint leftPrev, MyPoint rightNext) : this(myLine.First, myLine.Second, myLine.Color, myLine.ParentPolygon)
         {
-            LeftPrev = leftPrev;
-            RightNext = rightNext;
-            (double ux, double uy) = FindPerpendicular(this.First.Center, this.Second.Center);
-            double len = ReturnLen();
-            double dx = First.Center.X - Second.Center.X;
-            double dy = First.Center.Y - Second.Center.Y;
-            double dxu = dx / len;
-            double dyu = dy / len;
-
-            Point centerFirst = new Point((int)(Second.Center.X + dxu * len / 4 + ux * _startDist), (int)(Second.Center.Y + dyu * len / 4 + uy * _startDist));
-            Point centerSecond = new Point((int)(Second.Center.X + dxu * 3 * len / 4 - ux * _startDist ), (int)(Second.Center.Y + dyu * 3 * len / 4 - uy * _startDist));
-
-            FirstControlVertex = new BezierControlVertex(centerFirst, myLine.First.Radius, ParentPolygon, this);
-            FirstControlVertex.PropertyChanged += OnPointChanged;
-            SecondControlVertex = new BezierControlVertex(centerSecond, myLine.Second.Radius, ParentPolygon, this);
-            SecondControlVertex.PropertyChanged += OnPointChanged;
-            ParentPolygon.BezierPoints.Add(FirstControlVertex);
-            ParentPolygon.BezierPoints.Add(SecondControlVertex);
-            CalcTheBoundingBox();
         }
 
         public override void VisitDrawer(IDrawer drawer)
@@ -128,6 +113,8 @@ namespace CG1.Shapes
             double dx = pointThatWasMoved.Center.X - thirdPoint.Center.X;
             double dy = pointThatWasMoved.Center.Y - thirdPoint.Center.Y;
             double len = Math.Sqrt(dx * dx + dy * dy);
+            if (len < 10e-6)
+                len = 10e-6;
             double ux = dx / len;
             double uy = dy / len;
             double newLen = 0;
@@ -145,8 +132,17 @@ namespace CG1.Shapes
             }
             else if (pointThatWasMoved.VertexState == BezierVertex.State.G1)
             {
+                // It doesn't work
                 len = direction ? LineFromFirstToFirstControl.Len : LineFromSecondControlToSecond.Len;
-                pointToMove.Center = new Point((int)(pointThatWasMoved.Center.X + ux * len), (int)(pointThatWasMoved.Center.Y + uy * len)); 
+
+                if (thirdPoint is BezierControlVertex)
+                {
+                    pointToMove.Center = new Point((int)(pointThatWasMoved.Center.X + dx), (int)(pointThatWasMoved.Center.Y + dy));
+                }
+                else
+                {
+                    pointToMove.Center = new Point((int)(pointThatWasMoved.Center.X + ux * len), (int)(pointThatWasMoved.Center.Y + uy * len));
+                }
             }
             
             return false;

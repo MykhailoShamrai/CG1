@@ -67,6 +67,8 @@ namespace CG1.Shapes
                             int dx = this.Center.X - middleVertex.Center.X;
                             int dy = this.Center.Y - middleVertex.Center.Y;
                             double len = Math.Sqrt(dx * dx + dy * dy);
+                            if (len < 10e-6)
+                                len = 10e-6;
                             double ux = dx / len;
                             double uy = dy / len;
                             NewCenter = new Point((int)(this.Center.X - L * ux / 3), (int)(this.Center.Y - L * uy / 3));
@@ -98,6 +100,8 @@ namespace CG1.Shapes
                             {
                                 int dy = middleVertex.Center.Y - thirdVertex.Center.Y;
                                 double len = Math.Sqrt(dy * dy);
+                                if (len < 10e-6)
+                                    len = 10e-6;
                                 if (thirdVertex.Center.Y < middleVertex.Center.Y && this.Center.Y < middleVertex.Center.Y)
                                     NewCenter = new Point(this.Center.X, (int)(middleVertex.Center.Y + len));
                                 else if (thirdVertex.Center.Y > middleVertex.Center.Y && Center.Y > middleVertex.Center.Y)
@@ -109,6 +113,8 @@ namespace CG1.Shapes
                             {
                                 int dx = middleVertex.Center.X - thirdVertex.Center.X;
                                 double len = Math.Sqrt(dx * dx);
+                                if (len < 10e-6)
+                                    len = 10e-6;
                                 if (thirdVertex.Center.X < middleVertex.Center.X && Center.X < middleVertex.Center.X)
                                     NewCenter = new Point((int)(middleVertex.Center.X + len), Center.Y);
                                 else if (thirdVertex.Center.X > middleVertex.Center.X && Center.X > middleVertex.Center.X)
@@ -127,6 +133,8 @@ namespace CG1.Shapes
                             int dx = this.Center.X - middleVertex.Center.X;
                             int dy = this.Center.Y - middleVertex.Center.Y;
                             double len = Math.Sqrt(dx * dx + dy * dy);
+                            if (len < 10e-6)
+                                len = 10e-6;
                             double ux = dx / len;
                             double uy = dy / len;
                             NewCenter = new Point((int)(middleVertex.Center.X - L * ux), (int)(middleVertex.Center.Y - L * uy));
@@ -140,6 +148,8 @@ namespace CG1.Shapes
                             int dx = this.Center.X - middleVertex.Center.X;
                             int dy = this.Center.Y - middleVertex.Center.Y;
                             double len = Math.Sqrt(dx * dx + dy * dy);
+                            if (len < 10e-6)
+                                len = 10e-6;
                             double ux = dx / len;
                             double uy = dy / len;
                             double L = lineBetween.ReturnLen();
@@ -165,6 +175,8 @@ namespace CG1.Shapes
                         int dx = this.Center.X - middleVertex.Center.X;
                         int dy = this.Center.Y - middleVertex.Center.Y;
                         double len = Math.Sqrt(dx * dx + dy * dy);
+                        if (len < 10e-6)
+                            len = 10e-6;
                         NewCenter = new Point((middleVertex.Center.X - dx), (middleVertex.Center.Y - dy));
                         thirdVertex.Center = NewCenter;
                         break;
@@ -172,6 +184,8 @@ namespace CG1.Shapes
                         dx = this.Center.X - middleVertex.Center.X;
                         dy = this.Center.Y - middleVertex.Center.Y;
                         len = Math.Sqrt(dx * dx + dy * dy);
+                        if (len < 10e-6)
+                            len = 10e-6;
                         double ux = dx / len;
                         double uy = dy / len;
                         double L = direction ? ((MyBezier)(lineBetween)).LineFromSecondControlToSecond.Len : ((MyBezier)(lineBetween)).LineFromFirstToFirstControl.Len;
