@@ -13,7 +13,7 @@ namespace CG1.Drawers
 
         public Font Font => new Font("Comic Sans Ms", 10, FontStyle.Regular);
 
-        public Graphics G { get; }
+        public Graphics G { get; set; }
 
         public Brush Brush => new SolidBrush(Color.Black);
 

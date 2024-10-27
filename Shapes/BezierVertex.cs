@@ -1,4 +1,5 @@
-﻿using System;
+﻿using CG1.Drawers;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -25,6 +26,9 @@ namespace CG1.Shapes
             Menu.Items[2].Click += ParentPolygon.C1_click;
             Menu.Items[3].Click += ParentPolygon.G1_click;
         }
-
+        public override void VisitDrawer(IDrawer drawer)
+        {
+            drawer.Draw(this, this.Color);
+        }
     }
 }

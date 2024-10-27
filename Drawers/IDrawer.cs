@@ -11,20 +11,29 @@ namespace CG1.Drawers
         public Bitmap Canvas { get; }
 
         public Font Font { get; }
-        public Graphics G { get; }
+        public Graphics G { get; set; }
         public Brush Brush { get; }
         public Pen Pen { get; }
         public Pen PenViolet { get; }
-        public Pen DashedPen { get; }
+        public Pen DashedPen { get; } 
         public Image VertImage { get; }
         public Image HorImage { get; }
         public int DistToImage { get; }
+
+
         public void Draw(MyPoint point, Color color)
         {
             Pen.Color = color;
             G.DrawEllipse(Pen, point.Center.X - point.Radius, point.Center.Y - point.Radius, 2 * point.Radius, 2 * point.Radius);
         }
         public void Draw(MyLine line, Color color);
+
+
+        public void Draw(BezierVertex vertex, Color color)
+        {
+            Draw((MyPoint)vertex, color);
+            G.DrawString(vertex.VertexState.ToString(), Font, Brush, vertex.Center);
+        }
 
         public void Draw(MyLenghtLine lenghtLine, Color color)
         {
@@ -47,7 +56,6 @@ namespace CG1.Drawers
         }
         public void Draw(MyBezier myBezier, Color color)
         {
-            Pen.Color = color;
             G.DrawLine(DashedPen, myBezier.First.Center, myBezier.Second.Center);
             G.DrawLine(DashedPen, myBezier.FirstControlVertex.Center, myBezier.SecondControlVertex.Center);
             G.DrawLine(DashedPen, myBezier.First.Center, myBezier.FirstControlVertex.Center);

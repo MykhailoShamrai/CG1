@@ -127,15 +127,9 @@ namespace CG1.Shapes
             BezierVertex pointThatWasMoved = direction ? (BezierVertex)this.First : (BezierVertex)this.Second;
             MyPoint pointToMove = direction ? this.FirstControlVertex : this.SecondControlVertex;
             MyPoint thirdPoint = direction ? this.LeftPrev : this.RightNext;
-            //double dx = pointThatWasMoved.Center.X - thirdPoint.Center.X;
-            //double dy = pointThatWasMoved.Center.Y - thirdPoint.Center.Y;
-            //double len = Math.Sqrt(dx * dx + dy * dy);
-            //if (len < 10e-6)
-            //    len = 10e-6;
             (double dx, double dy, double len) = MyLine.LenBetweenTwoPoints(thirdPoint.Center, pointThatWasMoved.Center);
             double ux = dx / len;
             double uy = dy / len;
-            double newLen = 0;
             if (pointThatWasMoved.VertexState == BezierVertex.State.C1)
             {
                 // Here must be check if the third point is from another bezier

@@ -22,6 +22,8 @@ namespace CG1.Shapes
             _bezier = bezier;
         }
 
+        
+
         public void ModificateWhileDragging()
         {
             bool direction = this.Equals(_bezier.FirstControlVertex) ? false : true;
@@ -197,4 +199,5 @@ namespace CG1.Shapes
             }
         }
     }
+
 }

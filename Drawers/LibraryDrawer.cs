@@ -9,7 +9,7 @@ namespace CG1.Drawers
 
         public Font Font => new Font("Comic Sans Ms", 10, FontStyle.Regular);
 
-        public Graphics G { get; } 
+        public Graphics G { get; set; } 
 
         public Brush Brush => new SolidBrush(Color.Black);
 
@@ -17,7 +17,7 @@ namespace CG1.Drawers
 
         public Pen PenViolet => new Pen(Color.Violet, 2);
 
-        public Pen DashedPen => new Pen(Color.Violet, 1);
+        public Pen DashedPen { get; set; }
 
         public Image VertImage => Image.FromFile("./PaintVertOnly.png");
 
@@ -29,7 +29,11 @@ namespace CG1.Drawers
         public LibraryDrawer(Bitmap canvas)
         {
             Canvas = canvas;
-            DashedPen.DashPattern = [2, 2];
+            DashedPen = new Pen(Color.Violet, 1)
+            {
+                DashStyle = System.Drawing.Drawing2D.DashStyle.Custom,
+                DashPattern = new float[] { 4, 4 }
+            };
             G = Graphics.FromImage(Canvas);
         }
 
@@ -37,8 +41,8 @@ namespace CG1.Drawers
         public void Draw(MyLine line, Color color)
         {
             // I don't know why color aren't now visible
-            Pen.Color = color;
-            G.DrawLine(Pen, line.First.Center, line.Second.Center);
+            using (Pen newPen = new Pen(color, 2))
+                G.DrawLine(newPen, line.First.Center, line.Second.Center);
         }
     }
 }

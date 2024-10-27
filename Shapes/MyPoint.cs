@@ -38,7 +38,7 @@ namespace CG1.Shapes
             return Menu;
         }
 
-        public void VisitDrawer(IDrawer drawer)
+        public virtual void VisitDrawer(IDrawer drawer)
         {
             drawer.Draw(this, this.Color);
         }
