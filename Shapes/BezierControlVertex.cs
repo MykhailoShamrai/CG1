@@ -160,7 +160,6 @@ namespace CG1.Shapes
                             ParentPolygon.DragVertex(NewCenter, !direction, direction);
                             ParentPolygon.SelectedElement = this;
                         }
-
                         break;
                     default:
                         break;

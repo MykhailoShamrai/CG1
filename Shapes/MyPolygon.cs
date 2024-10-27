@@ -288,14 +288,15 @@ namespace CG1.Shapes
                     {
                         int indexLeft = index - counter - 1 >= 0 ? index - counter - 1 : Lines.Count + index - counter - 1;
                         int indexRight = (index + counter) % Lines.Count;
+                       
                         if (left && leftCont)
                             leftCont = Lines[indexLeft].ModifyForConstraints(false, draggedVertex);
-                        if (left && leftBez)
-                            leftBez = Lines[indexLeft].ModifyForBezier(false, draggedVertex);
                         if (right && rightCont)
                             rightCont = Lines[indexRight].ModifyForConstraints(true, draggedVertex);
+                        if (left && leftBez)
+                            leftBez = Lines[indexLeft].ModifyForBezier(false, draggedVertex, indexLeft);
                         if (right && rightBez)
-                            rightBez = Lines[indexRight]. ModifyForBezier(true, draggedVertex);
+                            rightBez = Lines[indexRight]. ModifyForBezier(true, draggedVertex, indexRight);
                         counter++;
                     }
                     leftCont = true;
@@ -312,9 +313,9 @@ namespace CG1.Shapes
                         if (left && leftCont)
                             leftCont = Lines[indexLeft].ModifyForConstraints(false, draggedVertex);
                         if (left && leftBez)
-                            leftBez = Lines[indexLeft].ModifyForBezier(false, draggedVertex);
+                            leftBez = Lines[indexLeft].ModifyForBezier(false, draggedVertex, indexLeft);
                         if (right && rightBez)
-                            rightCont = Lines[indexRight].ModifyForBezier(true, draggedVertex);
+                            rightCont = Lines[indexRight].ModifyForBezier(true, draggedVertex, indexRight);
                        
                         counter++;
                     }

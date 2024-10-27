@@ -2,6 +2,8 @@
 using CG1.Drawers;
 using System.ComponentModel;
 using System.Diagnostics.CodeAnalysis;
+using static System.Windows.Forms.LinkLabel;
+using System.Diagnostics.Metrics;
 
 namespace CG1.Shapes
 {
@@ -136,11 +138,15 @@ namespace CG1.Shapes
             return false;
         }
 
-        public virtual bool ModifyForBezier(bool direction, MyPoint startVertex)
+        public virtual bool ModifyForBezier(bool direction, MyPoint startVertex, int index = 0)
         {
-            return true;
+            int indexLeft = index - 1 >= 0 ? index - 1 : ParentPolygon.Lines.Count + index - 1;
+            int indexRight = (index) % ParentPolygon.Lines.Count;
+            int indTmp = direction ? indexRight : indexLeft;
+            if (ParentPolygon.Lines[indTmp] is MyBezier)
+                return true;
+            return false;
         }
-
         public virtual void ChangeMenuWhileCreating(MyLine LeftLine, MyLine RightLine)
         {
         }

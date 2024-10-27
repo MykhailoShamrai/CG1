@@ -121,7 +121,7 @@ namespace CG1.Shapes
                 base.CalcTheBoundingBox();
         }
 
-        public override bool ModifyForBezier(bool direction, MyPoint startVertex)
+        public override bool ModifyForBezier(bool direction, MyPoint startVertex, int index = 0)
         {
             // I think, that move after bezier isn't necessary
             BezierVertex pointThatWasMoved = direction ? (BezierVertex)this.First : (BezierVertex)this.Second;
@@ -152,9 +152,7 @@ namespace CG1.Shapes
             {
                 // It doesn't work
                 len = direction ? LineFromFirstToFirstControl : LineFromSecondControlToSecond;
-
-                    pointToMove.Center = new Point((int)(pointThatWasMoved.Center.X + ux * len), (int)(pointThatWasMoved.Center.Y + uy * len));
-                
+                pointToMove.Center = new Point((int)(pointThatWasMoved.Center.X + ux * len), (int)(pointThatWasMoved.Center.Y + uy * len));
             }
             
             return false;
