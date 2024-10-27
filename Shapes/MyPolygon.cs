@@ -35,7 +35,6 @@ namespace CG1.Shapes
             Lines = new List<MyLine>();
             BezierPoints = new List<BezierControlVertex>();
             VertexRadius = 6;
-            //SetDrawer(new LibraryDrawer(Par));
         }
 
         public void DragPolygon(int dx, int dy)
@@ -614,6 +613,17 @@ namespace CG1.Shapes
             BezierVertex chosen = (BezierVertex)_chosenElement;
             chosen.VertexState = BezierVertex.State.G1;
             DragVertex(chosen.Center);
+            Form1.ClearBitmap(_form1.Bitmap);
+            DrawPolygon(_form1.Bitmap);
+            _form1.Refresh();
+        }
+
+        public void DeletePolygon_click(object? sender, EventArgs e)
+        {
+            BezierPoints.Clear();
+            Points.Clear();
+            Lines.Clear();
+            Valid = false;
             Form1.ClearBitmap(_form1.Bitmap);
             DrawPolygon(_form1.Bitmap);
             _form1.Refresh();

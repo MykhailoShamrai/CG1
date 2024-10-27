@@ -42,11 +42,13 @@ namespace CG1.Shapes
             Second.PropertyChanged += OnPointChanged;
             CalcTheBoundingBox();
 
-            Menu.Items[0].Click += polygon.AddVertex_Click;
-            Menu.Items[1].Click += polygon.LenLock_Click;
-            Menu.Items[2].Click += polygon.VertLock_Click;
-            Menu.Items[3].Click += polygon.HorizontalLock_Click;
-            Menu.Items[4].Click += polygon.AddBezier_Click;
+            Menu.Items[0].Click += polygon.AddNormal_Click;
+            Menu.Items[1].Click += polygon.DeletePolygon_click;
+            Menu.Items[2].Click += polygon.AddVertex_Click;
+            Menu.Items[3].Click += polygon.LenLock_Click;
+            Menu.Items[4].Click += polygon.VertLock_Click;
+            Menu.Items[5].Click += polygon.HorizontalLock_Click;
+            Menu.Items[6].Click += polygon.AddBezier_Click;
 
             double dx = First.Center.X - Second.Center.X;
             double dy = First.Center.Y - Second.Center.Y;

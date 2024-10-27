@@ -59,9 +59,11 @@ namespace CG1.Shapes
 
             LineFromFirstToFirstControl = LenBetweenTwoPoints(FirstControlVertex.Center, First.Center).Item3;
             LineFromSecondControlToSecond = LenBetweenTwoPoints(SecondControlVertex.Center, Second.Center).Item3;
-            Menu.Items.Clear();
-            Menu.Items.Add(new ToolStripMenuItem("Add normal"));
-            Menu.Items[Menu.Items.Count - 1].Click += ParentPolygon.AddNormal_Click;
+            for (int i = Menu.Items.Count - 1; i > 1; i--)
+            {
+                Menu.Items.RemoveAt(i);
+            }
+            
             CalcTheBoundingBox();
         }
 
