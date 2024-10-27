@@ -482,11 +482,23 @@ namespace CG1.Shapes
             _chosenElement = Lines[index].Second;
             DragVertex(Lines[index].Second.Center);
             _chosenElement = null;
+            Form1.ClearBitmap(_form1.Bitmap);
+            DrawPolygon(_form1.Bitmap);
+            _form1.Refresh();
         }
 
         // It shouldn't look like that
         public void HorizontalLock_Click(object? sender, EventArgs e)
         {
+            int index = Lines.IndexOf((MyLine)_chosenElement);
+            int leftInd = index - 1 >= 0 ? index - 1 : Lines.Count + index - 1;
+            int rightInd = (index + 1) % Points.Count;
+            if ((Lines[leftInd] is MyVerticalLine && !((MyVerticalLine)Lines[leftInd]).IsVertical) ||
+                (Lines[rightInd] is MyVerticalLine && !((MyVerticalLine)Lines[rightInd]).IsVertical))
+            {
+                MessageBox.Show("Can't do that!");
+                return;
+            }
             ChangeEdgeType(-2);
             Form1.ClearBitmap(_form1.Bitmap);
             DrawPolygon(_form1.Bitmap);
@@ -495,6 +507,15 @@ namespace CG1.Shapes
 
         public void VertLock_Click(object? sender, EventArgs e)
         {
+            int index = Lines.IndexOf((MyLine)_chosenElement);
+            int leftInd = index - 1 >= 0 ? index - 1 : Lines.Count + index - 1;
+            int rightInd = (index + 1) % Points.Count;
+            if ((Lines[leftInd] is MyVerticalLine && ((MyVerticalLine)Lines[leftInd]).IsVertical) ||
+                (Lines[rightInd] is MyVerticalLine && ((MyVerticalLine)Lines[rightInd]).IsVertical))
+            {
+                MessageBox.Show("Can't do that!");
+                return;
+            }
             ChangeEdgeType(-1);
             Form1.ClearBitmap(_form1.Bitmap);
             DrawPolygon(_form1.Bitmap);
@@ -541,6 +562,36 @@ namespace CG1.Shapes
         {
             ChangeEdgeType(-3);
             Form1.ClearBitmap(_form1.Bitmap);   
+            DrawPolygon(_form1.Bitmap);
+            _form1.Refresh();
+        }
+
+        public void C0_click(object? sender, EventArgs e)
+        {
+            BezierVertex chosen = (BezierVertex)_chosenElement;
+            chosen.VertexState = BezierVertex.State.C0;
+            DragVertex(chosen.Center);
+            Form1.ClearBitmap(_form1.Bitmap);
+            DrawPolygon(_form1.Bitmap);
+            _form1.Refresh();
+        }
+
+        public void C1_click(object? sender, EventArgs e)
+        {
+            BezierVertex chosen = (BezierVertex)_chosenElement;
+            chosen.VertexState = BezierVertex.State.C1;
+            DragVertex(chosen.Center);
+            Form1.ClearBitmap(_form1.Bitmap);
+            DrawPolygon(_form1.Bitmap);
+            _form1.Refresh();
+        }
+
+        public void G1_click(object? sender, EventArgs e)
+        {
+            BezierVertex chosen = (BezierVertex)_chosenElement;
+            chosen.VertexState = BezierVertex.State.G1;
+            DragVertex(chosen.Center);
+            Form1.ClearBitmap(_form1.Bitmap);
             DrawPolygon(_form1.Bitmap);
             _form1.Refresh();
         }

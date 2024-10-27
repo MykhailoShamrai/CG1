@@ -21,9 +21,10 @@ namespace CG1.Shapes
             Menu.Items.Add(C1Button);
             ToolStripMenuItem G1Button = new ToolStripMenuItem("G1");
             Menu.Items.Add(G1Button);
+            Menu.Items[1].Click += ParentPolygon.C0_click;
+            Menu.Items[2].Click += ParentPolygon.C1_click;
+            Menu.Items[3].Click += ParentPolygon.G1_click;
         }
-
-        
 
     }
 }
