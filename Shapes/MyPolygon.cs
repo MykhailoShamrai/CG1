@@ -116,32 +116,53 @@ namespace CG1.Shapes
                 if (Points[0].Equals(point))
                 {
                     Points.RemoveAt(0);
+                    _chosenElement = Lines[0];
+                    ChangeEdgeType(-3);
                     Lines.RemoveAt(0);
-                    //Lines.RemoveAt(Lines.Count - 1);
-                    //Lines[^1].ChangeSecondEnd(Points[0]);
+                    if (Lines[^1] is MyBezier)
+                    {
+                        BezierPoints.Remove(((MyBezier)Lines[^1]).FirstControlVertex);
+                        BezierPoints.Remove(((MyBezier)Lines[^1]).SecondControlVertex);
+                    }
                     Lines[^1] = new MyLine(Lines[^1].First, Points[0], Color.Black, this);
+                    _chosenElement = Lines[^1];
+                    ChangeEdgeType(-3);
                 }
                 else if (Points[^1].Equals(point))
                 {
                     Points.RemoveAt(Points.Count - 1);
+                    _chosenElement = Lines[^1];
+                    ChangeEdgeType(-3);
                     Lines.RemoveAt(Lines.Count - 1);
-                    //Lines[^1].ChangeSecondEnd(Points[0]);
-                    Lines[^1] = new MyLine(Points[^1], Points[0], Color.Black, this);
-                    //Lines[^2] = new MyLine(Points[^2], Points[^1], Color.Black, this);
+                    if (Lines[^1] is MyBezier)
+                    {
+                        BezierPoints.Remove(((MyBezier)Lines[^1]).FirstControlVertex);
+                        BezierPoints.Remove(((MyBezier)Lines[^1]).SecondControlVertex);
+                    }
+                    Lines[^1] = new MyLine(Points[^1], Points[0], Color.Black, this); 
+                    _chosenElement = Lines[^1];
+                    ChangeEdgeType(-3);
                 }
                 else
                 {
                     int index = Points.IndexOf(point);
-                    MyLine lineTmp = Lines[index];
-                    //MyPoint pointTmp = Points[index + 1];
-                    //Lines[index - 1].ChangeSecondEnd(pointTmp);
+                    _chosenElement = Lines[index];
+                    ChangeEdgeType(-3);
                     Lines.RemoveAt(index);
                     Points.RemoveAt(index);
+                    if (Lines[index - 1] is MyBezier)
+                    {
+                        BezierPoints.Remove(((MyBezier)Lines[index - 1]).FirstControlVertex);
+                        BezierPoints.Remove(((MyBezier)Lines[index - 1]).SecondControlVertex);
+                    }
                     Lines[index - 1] = new MyLine(Points[index - 1], Points[index], Color.Black, this);
+                    _chosenElement = Lines[index - 1];
+                    ChangeEdgeType(-3);
 
                 }
                 if (Points.Count < 3)
                 {
+                    BezierPoints.Clear();
                     Points.Clear();
                     Lines.Clear();
                     Valid = false;
@@ -476,7 +497,6 @@ namespace CG1.Shapes
                     ((MyBezier)Lines[rightInd]).LeftPrev = Lines[index].First;
                 }
             }
-            //Lines[index].ChangeMenuWhileCreating(Lines[leftInd], Lines[rightInd]);
             _chosenElement = Lines[index].First;
             TypeOfChosen = ChosenType.Vertex;
             DragVertex(Lines[index].First.Center);
