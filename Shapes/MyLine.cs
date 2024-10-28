@@ -9,6 +9,7 @@ namespace CG1.Shapes
 {
     public class MyLine : IElement
     {
+        public bool AntiAliasFlag { get; set; } = false;
         private int thicknes = 5;
         public double Len { get; set; }
         public MyPolygon ParentPolygon { get; set; }

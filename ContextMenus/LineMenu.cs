@@ -1,10 +1,18 @@
 ﻿using Microsoft.VisualBasic;
+using System.ComponentModel;
 
 namespace CG1.ContextMenus
 {
     internal class LineMenu : ContextMenuStrip
     {
-        public bool AntiAliasFlag {  get; set; }
+        public bool AntiAliasFlag { get; set; }
+        public event PropertyChangedEventHandler PropertyChanged;
+        protected void OnPropertyChanged(string propertyName)
+        {
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+        }
+
+
         public LineMenu() : base()
         {
             ToolStripMenuItem makeNormal = new ToolStripMenuItem("Add normal");
@@ -15,7 +23,10 @@ namespace CG1.ContextMenus
             ToolStripMenuItem makeVertical = new ToolStripMenuItem("Create vertical edge");
             ToolStripMenuItem makeHorizontal = new ToolStripMenuItem("Create horizontal edge");
             ToolStripMenuItem makeBezier = new ToolStripMenuItem("Create bezier");
+
+
             
+
             Items.Add(makeNormal);
             Items.Add(clear);
             Items.Add(drawWithAntiAlias);
@@ -26,8 +37,6 @@ namespace CG1.ContextMenus
             Items.Add(makeBezier);
 
             Items[2].Click += drawWithAntyAlias_Click;
-
-            AntiAliasFlag = false;
         }
 
         private void drawWithAntyAlias_Click(object? sender, EventArgs e)

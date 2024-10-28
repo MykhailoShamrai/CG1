@@ -140,7 +140,7 @@ namespace CG1
                 Point point = me.Location;
                 tmpPoint[1].Center = point;
                 tmpPoint[0] = (Polygon.Points.Count == 0) ? null : Polygon.Points[^1];
-                Polygon.DrawPolygon(Bitmap, tmpPoint[0], tmpPoint[1]);
+                //Polygon.DrawPolygon(Bitmap, tmpPoint[0], tmpPoint[1]);
             }
             else if (Polygon.Editing)
             {
@@ -148,7 +148,7 @@ namespace CG1
                 {
                     ClearBitmap(Bitmap);
                     Polygon.DragVertex(me.Location);
-                    Polygon.DrawPolygon(Bitmap);
+                    //Polygon.DrawPolygon(Bitmap);
                 }
             }
             else if (Polygon.Dragging)
@@ -158,8 +158,10 @@ namespace CG1
                 int dy = me.Location.Y - _startPointForDrag.Y;
                 Polygon.DragPolygon(dx, dy);
                 _startPointForDrag = me.Location;
-                Polygon.DrawPolygon(Bitmap);
+                //Polygon.DrawPolygon(Bitmap);
             }
+            ClearBitmap(Bitmap);
+            Polygon.DrawPolygon(Bitmap);
             pictureBoxMain.Refresh();
 
         }

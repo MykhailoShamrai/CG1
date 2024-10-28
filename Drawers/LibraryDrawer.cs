@@ -1,4 +1,5 @@
-﻿using CG1.Shapes;
+﻿using CG1.ContextMenus;
+using CG1.Shapes;
 using System.Numerics;
 
 namespace CG1.Drawers
@@ -41,6 +42,11 @@ namespace CG1.Drawers
         public void Draw(MyLine line, Color color)
         {
             // I don't know why color aren't now visible
+            if (((LineMenu)line.Menu).AntiAliasFlag)
+            {
+                ((IDrawer)this).DrawWithW(line.First.Center, line.Second.Center);
+                return;
+            }
             using (Pen newPen = new Pen(color, 2))
                 G.DrawLine(newPen, line.First.Center, line.Second.Center);
         }

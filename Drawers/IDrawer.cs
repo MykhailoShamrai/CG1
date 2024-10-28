@@ -1,6 +1,9 @@
-﻿using CG1.Shapes;
+﻿using CG1.ContextMenus;
+using CG1.Shapes;
 using System.Drawing;
 using System.Numerics;
+using System.Security.Cryptography;
+using System.Windows.Forms;
 
 namespace CG1.Drawers
 {
@@ -85,17 +88,82 @@ namespace CG1.Drawers
                 pFirst = pFirst + pSecond;
                 pSecond = pSecond + pThird;
                 tmp2.Center = new Point((int)pNow.X, (int)pNow.Y);
-                G.DrawLine(PenViolet, tmpLine.First.Center, tmpLine.Second.Center);
+                if (((LineMenu)myBezier.Menu).AntiAliasFlag)
+                {
+                    DrawWithW(tmpLine.First.Center, tmpLine.Second.Center);
+
+                }
+                else
+                {
+                    G.DrawLine(PenViolet, tmpLine.First.Center, tmpLine.Second.Center);
+                }
                 tmp1.Center = new Point((int)pNow.X, (int)pNow.Y);
                 t += d;
             }
             tmp2.Center = myBezier.Second.Center;
-            G.DrawLine(PenViolet, tmpLine.First.Center, tmpLine.Second.Center);
+            if (((LineMenu)myBezier.Menu).AntiAliasFlag)
+            {
+                DrawWithW(tmpLine.First.Center, tmpLine.Second.Center);
+
+            }
+            else
+            {
+                G.DrawLine(PenViolet, tmpLine.First.Center, tmpLine.Second.Center);
+            }
         }
 
-        protected static void DrawWithW(MyLine line)
+        protected static void setPixelWithBrightness(Bitmap canvas, int x, int y, double brightness)
         {
+            int c = (int)(255 * brightness);
+            Color clr = Color.FromArgb(c, c, c);
+            if (x >= 0 && y >= 0)
+                canvas.SetPixel(x, y, clr);
+        }
 
+        public static double floatingPart(double numb)
+        {
+            return numb % 1.0;
+        }
+
+        public void DrawWithW(Point first, Point second)
+        {
+            bool steep = Math.Abs(second.Y - first.Y) > Math.Abs(second.X - first.X);
+            if (steep)
+            {
+                // swap
+                (first.X, first.Y) = (first.Y, first.X);
+                (second.X, second.Y) = (second.Y, second.X);
+            }
+            if (first.X > second.X)
+            {
+                (first.X, first.Y, second.X, second.Y) = (second.X, second.Y, first.X, first.Y);
+            }
+            double dx = second.X - first.X;
+            double dy = second.Y - first.Y;
+            double gradient = dy / dx;
+            if (Math.Abs(dx) < 10e-8)
+                gradient = 1;
+
+            double intersectY = first.Y;
+
+            if (steep)
+            {
+                for (int x = first.X; x <= second.X; x++)
+                {
+                    setPixelWithBrightness(Canvas, (int)(intersectY), x, 1 - floatingPart(intersectY));
+                    setPixelWithBrightness(Canvas, (int)(intersectY) - 1, x, floatingPart(intersectY));
+                    intersectY += gradient;
+                }
+            }
+            else
+            {
+                for (int x = first.X; x <= second.X; x++)
+                {
+                    setPixelWithBrightness(Canvas, x, (int)(intersectY), 1 - floatingPart(intersectY));
+                    setPixelWithBrightness(Canvas, x, (int)(intersectY) - 1, floatingPart(intersectY));
+                    intersectY += gradient;
+                }
+            }
         }
     }
 }

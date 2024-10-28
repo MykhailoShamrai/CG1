@@ -1,4 +1,5 @@
-﻿using CG1.Shapes;
+﻿using CG1.ContextMenus;
+using CG1.Shapes;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -39,6 +40,11 @@ namespace CG1.Drawers
 
         public void Draw(MyLine line, Color color)
         {
+            if (((LineMenu)line.Menu).AntiAliasFlag)
+            {
+                ((IDrawer)this).DrawWithW(line.First.Center, line.Second.Center);
+                return;
+            }
             Point first = line.First.Center;
             Point second = line.Second.Center;
             if (Math.Abs(second.Y - first.Y) < Math.Abs(second.X - first.X))
@@ -82,7 +88,8 @@ namespace CG1.Drawers
 
             for (int x = first.X; x <= second.X; x++)
             {
-                Canvas.SetPixel(x, y, Color.Black);
+                if (x >= 0 && y >= 0)
+                    Canvas.SetPixel(x, y, Color.Black);
                 if (D > 0)
                 {
                     y += yi;
@@ -112,7 +119,8 @@ namespace CG1.Drawers
 
             for (int y = first.Y; y <= second.Y; y++)
             {
-                Canvas.SetPixel(x, y, Color.Black);
+                if (x >= 0 && y >= 0)
+                    Canvas.SetPixel(x, y, Color.Black);
                 if (D > 0)
                 {
                     x += xi;
