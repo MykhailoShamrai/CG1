@@ -59,7 +59,7 @@ namespace CG1.Shapes
 
             LineFromFirstToFirstControl = LenBetweenTwoPoints(FirstControlVertex.Center, First.Center).Item3;
             LineFromSecondControlToSecond = LenBetweenTwoPoints(SecondControlVertex.Center, Second.Center).Item3;
-            for (int i = Menu.Items.Count - 1; i > 1; i--)
+            for (int i = Menu.Items.Count - 1; i > 2; i--)
             {
                 Menu.Items.RemoveAt(i);
             }

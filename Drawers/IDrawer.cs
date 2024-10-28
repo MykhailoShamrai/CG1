@@ -26,6 +26,7 @@ namespace CG1.Drawers
             using (Pen newPen = new Pen(color, 2))
                 G.DrawEllipse(newPen, point.Center.X - point.Radius, point.Center.Y - point.Radius, 2 * point.Radius, 2 * point.Radius);
         }
+
         public void Draw(MyLine line, Color color);
 
 
@@ -90,6 +91,11 @@ namespace CG1.Drawers
             }
             tmp2.Center = myBezier.Second.Center;
             G.DrawLine(PenViolet, tmpLine.First.Center, tmpLine.Second.Center);
+        }
+
+        protected static void DrawWithW(MyLine line)
+        {
+
         }
     }
 }
