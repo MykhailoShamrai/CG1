@@ -50,6 +50,7 @@
             LenBox.TabIndex = 1;
             LenBox.Text = "100";
             LenBox.TextChanged += textBox1_TextChanged;
+            LenBox.KeyDown += textBoxTest_KeyDown;
             // 
             // AcceptButton
             // 
@@ -63,7 +64,6 @@
             // 
             // FormForLen
             // 
-            AcceptButton = AcceptButton;
             AutoScaleDimensions = new SizeF(8F, 20F);
             AutoScaleMode = AutoScaleMode.Font;
             BackColor = SystemColors.ControlLight;

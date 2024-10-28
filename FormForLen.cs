@@ -16,11 +16,22 @@
 
         private void textBox1_TextChanged(object sender, EventArgs e)
         {
-            char c = LenBox.Text[^1];
-            if ((c < '0' || c > '9') && c != '.')
+            if (LenBox.Text.Length > 0)
             {
-                MessageBox.Show("It's not a number", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                LenBox.Text = "";
+                char c = LenBox.Text[^1];
+                if ((c < '0' || c > '9') && c != '.')
+                {
+                    MessageBox.Show("It's not a number", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    LenBox.Text = "";
+                }
+            }
+        }
+
+        private void textBoxTest_KeyDown(object sender, KeyEventArgs e)
+        {
+            if (e.KeyCode == Keys.Enter)
+            {
+                AcceptButton_Click(this, new EventArgs());
             }
         }
 
